@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Coin Watcher</string>
+    <string name="coin_list">거래소</string>
+    <string name="funding_history">투자내역</string>
+    <string name="settings">설정</string>
+    <string name="auto_trading">자동매매</string>
+    <string name="openDrawer">open</string>
+    <string name="closeDrawer">close</string>
+    <string name="search_hint">코인명/심볼 검색</string>
+    <string name="portfolio">보유현황</string>
+    <string name="tradingHistory">거래내역</string>
+    <string name="coinName">한글명</string>
+    <string name="trade_price">현재가</string>
+    <string name="change_rate">전일대비</string>
+    <string name="acc_trade_price_24h">거래대금</string>
+</resources>

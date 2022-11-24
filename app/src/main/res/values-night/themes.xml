@@ -1,0 +1,12 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.CoinWatcher" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/nightColorPrimary</item>
+        <item name="colorPrimaryDark">@color/nightColorPrimaryDark</item>
+        <item name="android:textColorPrimary">@color/nightTextColorPrimary</item>
+        <item name="android:windowBackground">@color/nightWindowBackground</item>
+        <item name="android:navigationBarColor">@color/nightNavigationBarColor</item>
+        <item name="colorSecondary">@color/nightColorPrimary</item>
+        <item name="colorAccent">@color/nightColorAccent</item>
+    </style>
+</resources>

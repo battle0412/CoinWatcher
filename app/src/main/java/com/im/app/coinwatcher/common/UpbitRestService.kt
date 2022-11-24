@@ -1,0 +1,71 @@
+package com.im.app.coinwatcher.common
+
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
+
+interface UpbitRestService {
+    /*
+    unit 분 단위. 가능한 값 : 1, 3, 5, 15, 10, 30, 60, 240
+    market 마켓 코드 (ex. KRW-BTC)
+    count 캔들 개수(최대 200개까지 요청 가능)
+     */
+    @GET("v1/candles/minutes/{unit}")
+    fun requestMinuteCandles(
+        @Path("unit") unit: Int,
+        @Query("market") market: String,
+        @Query("count") count: Int
+    ): Call<ResponseBody>
+    /*
+    unit 일: days, 주: weeks, 월: months
+     */
+    @GET("v1/candles/{unit}")
+    fun requestCandles(
+        @Path("unit") unit: String,
+        @Query("market") market: String,
+        @Query("count") count: Int
+    ): Call<ResponseBody>
+
+    /*
+    market *	마켓 ID (필수)	String
+    side *	주문 종류 (필수)
+    - bid : 매수
+    - ask : 매도	String
+    volume *	주문량 (지정가, 시장가 매도 시 필수)	NumberString
+    price *	주문 가격. (지정가, 시장가 매수 시 필수)
+    ex) KRW-BTC 마켓에서 1BTC당 1,000 KRW로 거래할 경우, 값은 1000 이 된다.
+    ex) KRW-BTC 마켓에서 1BTC당 매도 1호가가 500 KRW 인 경우, 시장가 매수 시 값을 1000으로 세팅하면 2BTC가 매수된다.
+    (수수료가 존재하거나 매도 1호가의 수량에 따라 상이할 수 있음)	NumberString
+    ord_type *	주문 타입 (필수)
+    - limit : 지정가 주문
+    - price : 시장가 주문(매수)
+    - market : 시장가 주문(매도)	String
+    identifier	조회용 사용자 지정값 (선택)	String (Uniq 값 사용)
+    */
+    @POST("v1/orders")
+    fun requestOrders(
+        @Query("market") market: String,
+        @Query("side") side: String,
+        @Query("volume") volume: String,
+        @Query("price") price: String,
+        @Query("ord_type") ord_type: String,
+        @Query("identifier") identifier: String,
+    ): Call<ResponseBody>
+
+    @GET("v1/accounts")
+    fun requestAccounts(): Call<ResponseBody>
+
+    @GET("v1/market/all")
+    fun requestMarketAll(): Call<ResponseBody>
+
+    /*
+    markets 반점으로 구분되는 마켓 코드 (ex. KRW-BTC, BTC-ETH)
+     */
+    @GET("v1/ticker")
+    fun requestMarketsTicker(
+        @Query("markets") market: String
+    ): Call<ResponseBody>
+}

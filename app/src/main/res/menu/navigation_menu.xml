@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<group android:checkableBehavior="single">
+        <item
+            android:id="@+id/friend_add"
+            android:icon="@drawable/ic_baseline_insert_invitation_24"
+            android:title="@string/friend_invitation"
+            />
+        <item
+            android:id="@+id/my_messages"
+            android:icon="@drawable/ic_baseline_message_24"
+            android:title="@string/message"
+            />
+        <item
+            android:id="@+id/my_diary"
+            android:icon="@drawable/ic_baseline_add_comment_24"
+            android:title="@string/my_diary"
+            />
+        <item
+            android:id="@+id/reservation_list"
+            android:icon="@drawable/ic_baseline_add_ic_call_24"
+            android:title="@string/my_reservation"
+            />
+    </group>
+    <item android:title="@string/etc">
+        <menu>
+            <item
+                android:icon="@drawable/ic_baseline_settings_24"
+                android:title="@string/settings" />
+            <item
+                android:icon="@android:drawable/ic_menu_help"
+                android:title="@string/help" />
+        </menu>
+    </item>-->
+</menu>

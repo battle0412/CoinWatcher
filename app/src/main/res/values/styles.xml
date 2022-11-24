@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="textBold" parent="android:Widget.EditText">
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="underline">
+        <item name="android:background">@drawable/underline</item>
+    </style>
+</resources>

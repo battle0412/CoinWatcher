@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="red">#FFFF0000</color>
+    <color name="blue">#FF0008FF</color>
+    <color name="underLine">#4DBBBBBB</color>
+    <color name="itemTextColor">#FFFFFFFF</color>
+    <!--day-->
+    <color name="colorPrimary">#FF283593</color>
+    <color name="colorPrimaryDark">#FF283593</color>
+    <color name="textColorPrimary">#FF212121</color>
+    <color name="windowBackground">#FFFFFFFF</color>
+    <color name="navigationBarColor">#FF212121</color>
+    <color name="colorAccent">#FF283593</color>
+    <!--night-->
+    <color name="nightColorPrimary">#FF283593</color>
+    <color name="nightColorPrimaryDark">#FF283593</color>
+    <color name="nightTextColorPrimary">#FFFFFFFF</color>
+    <color name="nightWindowBackground">#FF212121</color>
+    <color name="nightNavigationBarColor">#FF212121</color>
+    <color name="nightColorAccent">#FFFFFFFF</color>
+</resources>
+<!--
+투명도     색상
+100% - FF
+
+95% - F2
+
+90% - E6
+
+85% - D9
+
+80% - CC
+
+75% - BF
+
+70% - B3
+
+65% - A6
+
+60% - 99
+
+55% - 8C
+
+50% - 80
+
+45% - 73
+
+40% - 66
+
+35% - 59
+
+30% - 4D
+
+25% - 40
+
+20% - 33
+
+15% - 26
+
+10% - 1A
+
+5% - 0D
+
+0% - 00-->
