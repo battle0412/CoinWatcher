@@ -3,9 +3,10 @@ package com.im.app.coinwatcher
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Color
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModel
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.im.app.coinwatcher.common.decimalFormat
 import com.im.app.coinwatcher.databinding.RecyclerCoinItemBinding
@@ -15,7 +16,7 @@ import com.im.app.coinwatcher.json_data.MarketTicker
 
 class CoinListFragmentAdapter(private var marketList: MutableList<MarketTicker>
 , private val owner: Activity
-, private val kwrMarketList: MutableList<MarketAll>
+, private val kwrMap: HashMap<String, MarketAll>
 ): RecyclerView.Adapter<CoinListFragmentAdapter.CoinListViewHolder>() {
     inner class CoinListViewHolder(val binding: RecyclerCoinItemBinding):
             RecyclerView.ViewHolder(binding.root)
@@ -31,6 +32,7 @@ class CoinListFragmentAdapter(private var marketList: MutableList<MarketTicker>
     /**
      * coinList의 index value
      */
+    @RequiresApi(Build.VERSION_CODES.N)
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: CoinListViewHolder, position: Int) {
         with(holder.binding){
@@ -63,9 +65,10 @@ class CoinListFragmentAdapter(private var marketList: MutableList<MarketTicker>
     }
     override fun getItemCount() = marketList.size
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun marketMapping(market: String): String{
-        kwrMarketList.forEach{ marketAll ->
-            if(marketAll.market == market) return marketAll.korean_name
+        kwrMap.forEach{ (key, value) ->
+            if(key == market) return value.korean_name
         }
         return market
     }
