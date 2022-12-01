@@ -11,7 +11,11 @@
     <color name="red">#FFFF0000</color>
     <color name="blue">#FF0008FF</color>
     <color name="underLine">#4DBBBBBB</color>
+    <color name="switchTrack">#FFBBBBBB</color>
+    <color name="switchTrackDark">#B3434343</color>
+    <color name="subTitle">#4D434343</color>
     <color name="itemTextColor">#FFFFFFFF</color>
+    <color name="dialogBackground">#4DBBBBBB</color>
     <!--day-->
     <color name="colorPrimary">#FF283593</color>
     <color name="colorPrimaryDark">#FF283593</color>

@@ -15,7 +15,6 @@ import com.im.app.coinwatcher.json_data.MarketTicker
 
 
 class CoinListFragmentAdapter(private var marketList: MutableList<MarketTicker>
-, private val owner: Activity
 , private val kwrMap: HashMap<String, MarketAll>
 ): RecyclerView.Adapter<CoinListFragmentAdapter.CoinListViewHolder>() {
     inner class CoinListViewHolder(val binding: RecyclerCoinItemBinding):
@@ -38,9 +37,9 @@ class CoinListFragmentAdapter(private var marketList: MutableList<MarketTicker>
         with(holder.binding){
             with(marketList[position]){
                 coinNameKor.text = marketMapping(market)
-                tradePrice.text = decimalFormat(trade_price, false)
+                tradePrice.text = decimalFormat(trade_price)
                 changeRate.text = (decimalFormat(change_rate  * 100, true)) + "%"
-                accTradePrice24h.text = """${decimalFormat(acc_trade_price_24h / 1000000, false)}백만"""
+                accTradePrice24h.text = """${decimalFormat(acc_trade_price_24h / 1000000)}백만"""
                 marketName.text = """${market.split("-")[1]}/${market.split("-")[0]}""" //KRW-BTC -> BTC/KRW
                 //EVEN : 보합 RISE : 상승 FALL : 하락	String
                 when(this.change){

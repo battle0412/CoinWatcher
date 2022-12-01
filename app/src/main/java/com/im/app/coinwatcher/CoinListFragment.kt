@@ -25,6 +25,7 @@ import com.im.app.coinwatcher.json_data.MarketAll
 import com.im.app.coinwatcher.json_data.MarketTicker
 import com.im.app.coinwatcher.okhttp_retrofit.RetrofitOkHttpManagerUpbit
 import kotlinx.coroutines.*
+import retrofit2.await
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -47,10 +48,9 @@ class CoinListFragment: Fragment() {
         binding = FragmentCoinListBinding.inflate(inflater, container, false)
         with(binding.searchCoin){
             this.doAfterTextChanged {
-                flag = false
                 if(this.text.toString().trim().isNotEmpty()){
                     kwrMap.forEach{
-                        if(SoundSearcher.matchString(it.value.korean_name + it.value.english_name, this.text.toString().trim()))
+                        if(SoundSearcher.matchString("""${it.value.korean_name}${it.value.english_name}""", this.text.toString().trim()))
                             filteredKwrMap[it.key] = it.value
                         /*else if(SoundSearcher.matchString(it.value.english_name, binding.searchCoin.text.toString())){
                             filteredKwrMap[it.key] = it.value
@@ -58,7 +58,6 @@ class CoinListFragment: Fragment() {
                     }
                     recyclerViewUpdate()
                 }
-                flag = true
             }
         }
 
@@ -85,9 +84,9 @@ class CoinListFragment: Fragment() {
         val kwrMarketStr = tmpList.joinToString(
             separator = ","
         )
-        val rest2 = RetrofitOkHttpManagerUpbit(generateJWT()).restService
-        val responseBody2 = responseUpbitAPI(rest2.requestMarketsTicker(kwrMarketStr))
-        marketList = getGsonList(responseBody2, MarketTicker::class.java)
+        val rest = RetrofitOkHttpManagerUpbit(generateJWT()).restService
+        val responseBody = responseUpbitAPI(rest.requestMarketsTicker(kwrMarketStr))
+        marketList = getGsonList(responseBody, MarketTicker::class.java)
             .sortedByDescending { MarketTicker -> MarketTicker.acc_trade_price_24h } as MutableList<MarketTicker>
         recyclerViewUpdate()
     }
@@ -95,8 +94,8 @@ class CoinListFragment: Fragment() {
     @RequiresApi(Build.VERSION_CODES.N)
     private suspend fun initMarketList(){
         val rest = RetrofitOkHttpManagerUpbit(generateJWT()).restService
-        val responseBody = responseUpbitAPI(rest.requestMarketAll())
-        getGsonList(responseBody, MarketAll::class.java)
+        val responseStr = responseUpbitAPI(rest.requestMarketAll())
+        getGsonList(responseStr, MarketAll::class.java)
             .filter { marketAll -> marketAll.market.contains("KRW") }//마켓 목록중 원화만 취급
             .forEach{
                 kwrMap[it.market] = it
@@ -117,7 +116,7 @@ class CoinListFragment: Fragment() {
                     val deco = MarketItemDecoration(requireContext(), 5, 8, 5, 8)
                     addItemDecoration(deco)
                     layoutManager = manager
-                    adapter = CoinListFragmentAdapter(marketList, activity as Activity, kwrMap)
+                    adapter = CoinListFragmentAdapter(marketList, kwrMap)
                 }
                 else{
                     val recyclerViewState = layoutManager!!.onSaveInstanceState()
@@ -126,9 +125,9 @@ class CoinListFragment: Fragment() {
                             SoundSearcher.matchString(marketMapping(it.market), binding.searchCoin.text.toString())
                         }.toMutableList()
 
-                        CoinListFragmentAdapter(tmpList, activity as Activity, kwrMap)
+                        CoinListFragmentAdapter(tmpList, kwrMap)
                     } else
-                        CoinListFragmentAdapter(marketList, activity as Activity, kwrMap)
+                        CoinListFragmentAdapter(marketList, kwrMap)
 
 
                     layoutManager!!.onRestoreInstanceState(recyclerViewState)

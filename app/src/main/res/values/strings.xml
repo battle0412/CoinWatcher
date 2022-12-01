@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Coin Watcher</string>
+    <string name="app_name">GZA</string>
     <string name="coin_list">거래소</string>
     <string name="funding_history">투자내역</string>
     <string name="settings">설정</string>
@@ -13,4 +13,38 @@
     <string name="trade_price">현재가</string>
     <string name="change_rate">전일대비</string>
     <string name="acc_trade_price_24h">거래대금</string>
+    <string name="my_asset">내 보유자산</string>
+    <string name="my_krw">보유KRW</string>
+    <string name="my_buy">총매수</string>
+    <string name="my_evaluation">총평가</string>
+    <string name="my_asset_total">총 보유자산</string>
+    <string name="my_profit_and_loss">손익평가</string>
+    <string name="my_rate_of_return">수익률</string>
+    <string name="my_portfolio">보유자산 포트폴리오</string>
+    <string name="my_array_rate">보유 비중(%)</string>
+    <string name="accesskey_hint">Access Key</string>
+    <string name="secretkey_hint">Secret Key</string>
+    <string name="alarm">알림</string>
+    <string name="modechange">야간 모드</string>
+    <string name="keychange">키 변경</string>
+    <string name="keyinsert">키 입력</string>
+    <string name="save">저장</string>
+    <string name="cancel">취소</string>
+    <string name="guide">업비트에서 발급받은 키를 입력하세요</string>
+    <string name="buy">매수</string>
+    <string name="sell">매도</string>
+    <string name="condition">조건</string>
+    <string name="item">종목</string>
+    <string name="rsi">RSI</string>
+    <string name="stochastic">스토캐스틱</string>
+    <string name="price">가격</string>
+    <string name="remain">내 가용자산</string>
+    <string name="more">이상</string>
+    <string name="less">이하</string>
+    <string name="buyPrice">매수금액</string>
+    <string name="created_at">체결시간</string>
+    <string name="market">코인명</string>
+    <string name="side">종류</string>
+    <string name="priceOrder">거래단가</string>
+    <string name="executed_volume">거래금액</string>
 </resources>

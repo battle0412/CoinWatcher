@@ -46,6 +46,7 @@ fun <T> getGsonData(jsonArrayStr: String, classType: Class<T>): T {
 
 /**
  * 업비트 응답 함수
+ * TO-DO 에러 응답 처리 추가해야함
  */
 suspend fun responseUpbitAPI(call: Call<ResponseBody>): String {
     val resultStr =
@@ -59,21 +60,41 @@ suspend fun responseUpbitAPI(call: Call<ResponseBody>): String {
 }
 
 /**
+ * 업비트 market 소수점 자리수 표시방법
  * input: 변환할 숫자
  * isPercent: 소수점 여부
  * 퍼센트 -> 항상 소수점 2자리
  * 1~100 -> 소수점 2자리
  * 1이하  -> 소수점 4자리
- * 그외 -> 소수점 없음
+ * 그외, 정수 -> 소수점 없음
  */
-fun decimalFormat(input: Number, isPercent: Boolean): String {
+fun decimalFormat(input: Number, isPercent: Boolean = false): String {
     val dFormat = if(isPercent) DecimalFormat("#,##0.00")
     else {
-        when(input.toFloat()){
-            in 1f .. 100f -> DecimalFormat("#,##0.00")
-            in 0f .. 1f -> DecimalFormat("0.00##")
-            else -> DecimalFormat("#,##0")
+        if(input::javaClass == Int.Companion::class.java)
+            DecimalFormat("#,##0")
+        else{
+            when(input.toFloat()){
+                in 1f .. 100f -> DecimalFormat("#,##0.00")
+                in 0f .. 1f -> DecimalFormat("0.00##")
+                else -> DecimalFormat("#,##0")
+            }
         }
+    }
+    return dFormat.format(input)
+}
+/**
+ * input: 변환할 숫자
+ * numberOfDecimalPlace: 소수점 자리수 최대 4
+ */
+fun decimalFormat(input: Number, numberOfDecimalPlace: Int): String {
+    val dFormat = when(numberOfDecimalPlace){
+        0 -> DecimalFormat("#,##0")
+        1 -> DecimalFormat("#,##0.0")
+        2 -> DecimalFormat("#,##0.00")
+        3 -> DecimalFormat("#,##0.000")
+        4 -> DecimalFormat("#,##0.0000")
+        else -> DecimalFormat("#,##0")
     }
     return dFormat.format(input)
 }

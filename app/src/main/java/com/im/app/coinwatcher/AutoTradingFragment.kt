@@ -6,31 +6,30 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
-import com.im.app.coinwatcher.databinding.FragmentFundingHistoryBinding
+import com.im.app.coinwatcher.databinding.FragmentAutoTradingBinding
 
-class FundingHistoryFragment: Fragment() {
+class AutoTradingFragment: Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val activity = activity as MainActivity
-        val binding = FragmentFundingHistoryBinding.inflate(inflater, container, false)
+        val binding = FragmentAutoTradingBinding.inflate(inflater, container, false)
         val tabLayout = binding.tabLayout
 
         if(savedInstanceState == null){
             with(activity.supportFragmentManager.beginTransaction()){
-                add(R.id.tabContent, MyAssetsFragment.getInstance())
+                add(R.id.tabContent, AutoBuyingFragment.getInstance())
                     .commit()
             }
         }
 
-        tabLayout.addOnTabSelectedListener(object: OnTabSelectedListener{
+        tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val instance = when(tab.position){
-                    0 -> MyAssetsFragment.getInstance()
-                    1 -> TransactionHistoryFragment.getInstance()
+                    0 -> AutoBuyingFragment.getInstance()
+                    1 -> AutoSellingFragment.getInstance()
                     else -> throw IllegalStateException("Unexpected value: ${tab.position}")
                 }
 
@@ -48,6 +47,6 @@ class FundingHistoryFragment: Fragment() {
     }
 
     companion object{
-        fun getInstance() = FundingHistoryFragment()
+        fun getInstance() = AutoTradingFragment()
     }
 }

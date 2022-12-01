@@ -5,18 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.im.app.coinwatcher.databinding.FragmentPortfolioBinding
+import com.im.app.coinwatcher.databinding.FragmentAutoSellingBinding
 
-class PortfolioFragment: Fragment() {
+class AutoSellingFragment: Fragment() {
+    private lateinit var binding: FragmentAutoSellingBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentPortfolioBinding.inflate(inflater, container, false)
+        binding = FragmentAutoSellingBinding.inflate(inflater, container, false)
         return binding.root
     }
     companion object{
-        fun getInstance() = PortfolioFragment()
+        fun getInstance() = AutoSellingFragment()
     }
 }

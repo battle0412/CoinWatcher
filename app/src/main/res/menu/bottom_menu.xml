@@ -4,6 +4,9 @@
     <item android:id="@+id/coinList"
         android:icon="@drawable/home"
         android:title="@string/coin_list"/>
+    <item android:id="@+id/autoTrading"
+        android:icon="@drawable/loop"
+        android:title="@string/auto_trading"/>
     <item android:id="@+id/fundingHistory"
         android:icon="@drawable/article"
         android:title="@string/funding_history"/>

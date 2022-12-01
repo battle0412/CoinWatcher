@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    //sharedPreference
+    id 'kotlin-android-extensions'
 }
 
 android {
@@ -52,5 +54,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.7.2'
     //JWT토큰 사용
     implementation group: 'com.auth0', name: 'java-jwt', version: '3.16.0'
+    //MPAndroidChart 사용 settings.gradle repositories에    maven { url 'https://jitpack.io' }   추가
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
 }

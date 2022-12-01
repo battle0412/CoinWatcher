@@ -6,4 +6,35 @@
     <style name="underline">
         <item name="android:background">@drawable/underline</item>
     </style>
+    <style name="UpbitSwitchTheme" parent="Widget.AppCompat.CompoundButton.Switch">
+    </style>
+    <style name="UpbitKeyTheme" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="hintTextColor">?android:attr/textColorPrimary</item>
+        <item name="boxStrokeColor">?android:attr/textColorPrimary</item>
+    </style>
+    <style name="UpbitTextTheme" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+    <style name="UpbitSubTextTheme" parent="Widget.MaterialComponents.TextView">
+        <item name="android:textColor">@color/switchTrackDark</item>
+    </style>
+    <style name="UpbitButtonTheme" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/colorPrimary</item>
+        <item name="android:textColor">@color/itemTextColor</item>
+    </style>
+    <style name="UpbitButtonThemeCancel" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/red</item>
+        <item name="android:textColor">@color/itemTextColor</item>
+    </style>
+    <style name="splashScreen" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/ic_launcher_background</item>
+    </style>
+    <style name="settingDialog" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/ic_launcher_background</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+    <style name="tab_textSize" parent="Widget.MaterialComponents.TabLayout">
+        <item name="android:textSize">20sp</item>
+    </style>
 </resources>

@@ -55,9 +55,15 @@ interface UpbitRestService {
         @Query("identifier") identifier: String,
     ): Call<ResponseBody>
 
+    /*
+    내가 보유한 자산 리스트
+     */
     @GET("v1/accounts")
     fun requestAccounts(): Call<ResponseBody>
 
+    /*
+    업비트에서 거래 가능한 마켓 목록
+     */
     @GET("v1/market/all")
     fun requestMarketAll(): Call<ResponseBody>
 

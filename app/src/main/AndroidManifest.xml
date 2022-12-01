@@ -14,8 +14,17 @@
         android:theme="@style/Theme.CoinWatcher"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustNothing"
+            />
+        <activity android:name=".KeySettingActivity"
+            android:theme="@style/settingDialog"
+            android:exported="true"
+            />
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
+            android:theme="@style/splashScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

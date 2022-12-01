@@ -1,54 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/search_coin"
-        android:layout_width="match_parent"
-        android:hint="@string/search_hint"
-        android:textColor="?attr/colorAccent"
-        android:textColorHint="?attr/colorAccent"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/zoom"
-        android:singleLine="true"
-        />
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="10dp">
     <LinearLayout
         android:id="@+id/rvHeader"
-        android:layout_below="@+id/search_coin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="20"
         android:layout_marginBottom="5dp"
+        android:layout_marginTop="30dp"
         android:orientation="horizontal">
         <TextView
-            android:id="@+id/coinName"
+            android:id="@+id/created_at"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="4.5"
-            android:text="@string/coinName"
+            android:layout_weight="4"
+            android:text="@string/created_at"
             android:textAlignment="center"
             />
         <TextView
-            android:id="@+id/trade_price"
+            android:id="@+id/market"
+            android:layout_weight="3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/market"
+            android:textAlignment="center"/>
+        <TextView
+            android:id="@+id/side"
+            android:layout_weight="3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/side"
+            android:textAlignment="center"/>
+        <TextView
+            android:id="@+id/priceOrder"
             android:layout_weight="5"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/trade_price"
+            android:text="@string/priceOrder"
             android:textAlignment="center"/>
         <TextView
-            android:id="@+id/change_rate"
-            android:layout_weight="5.5"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/change_rate"
-            android:textAlignment="center"/>
-        <TextView
-            android:id="@+id/acc_trade_price_24h"
+            android:id="@+id/executed_volume"
             android:layout_weight="5"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/acc_trade_price_24h"
+            android:text="@string/executed_volume"
             android:textAlignment="center"/>
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView

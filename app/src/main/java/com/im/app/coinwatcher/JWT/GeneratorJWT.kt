@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.im.app.coinwatcher.R
 import com.im.app.coinwatcher.common.ACCESS_KEY
 import com.im.app.coinwatcher.common.SECRET_KEY
 import com.im.app.coinwatcher.common.getQueryString
@@ -17,12 +18,13 @@ class GeneratorJWT {
     companion object JWTGenerator {
         @RequiresApi(Build.VERSION_CODES.N)
         fun generateJWT(params: HashMap<String, String>? = null): String{
-            val diff = System.currentTimeMillis();  //현재시간 - 1970년
-            val nonce = diff.toInt();
+            /*val diff = System.currentTimeMillis()
+            val nonce = diff.toInt()*/
+
             val algorithm: Algorithm = Algorithm.HMAC256(SECRET_KEY)
             val jwtToken = with(JWT.create()){
                 withClaim("access_key", ACCESS_KEY)
-                withClaim("nonce", nonce)
+                withClaim("nonce", UUID.randomUUID().toString())
                 if(params != null){
                     val paramStr = getQueryString(params)
                     val md = MessageDigest.getInstance("SHA-512")
