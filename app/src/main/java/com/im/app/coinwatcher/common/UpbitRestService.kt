@@ -1,7 +1,12 @@
 package com.im.app.coinwatcher.common
 
+import com.google.gson.JsonObject
+import com.im.app.coinwatcher.json_data.ReqOrder
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -47,12 +52,13 @@ interface UpbitRestService {
     */
     @POST("v1/orders")
     fun requestOrders(
-        @Query("market") market: String,
+        /*@Query("market") market: String,
         @Query("side") side: String,
         @Query("volume") volume: String,
         @Query("price") price: String,
         @Query("ord_type") ord_type: String,
-        @Query("identifier") identifier: String,
+        @Query("identifier") identifier: String*/
+        @Body order: RequestBody
     ): Call<ResponseBody>
 
     /*

@@ -186,3 +186,18 @@ data class MarketTicker(
     var lowest_52_week_date: String,
     var timestamp: Long
 )
+
+data class ReqOrder(
+    /*@Query("market") market: String,
+        @Query("side") side: String,
+        @Query("volume") volume: String,
+        @Query("price") price: String,
+        @Query("ord_type") ord_type: String,
+        @Query("identifier") identifier: String*/
+    var market: String,
+    var side: String,
+    var volume: String,
+    var price: String,
+    var ord_type: String,
+    var identifier: String
+)

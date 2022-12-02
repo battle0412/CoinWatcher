@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <com.google.android.material.tabs.TabLayout
+    <!--<com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
@@ -16,15 +15,172 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/buy"/>
+            android:text="@string/portfolio"/>
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/sell"/>
-    </com.google.android.material.tabs.TabLayout>
-    <FrameLayout
-        android:id="@+id/tabContent"
+            android:text="@string/tradingHistory"/>
+    </com.google.android.material.tabs.TabLayout>-->
+    <LinearLayout
+        android:id="@+id/condition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="10"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+        <!--<com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1.5"
+            style="@style/UpbitTextTheme"
+            android:text="@string/item"/>-->
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/marketItems"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4.5"/>
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/unitItems"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:dropDownHeight="120dp"
+            android:layout_weight="3"/>
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/alarmSwitching"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/UpbitSwitchTheme"
+            android:layout_weight="1.5"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/autoTradingContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tabLayout"/>
+        android:orientation="horizontal"
+        android:layout_below="@+id/condition"
+        android:weightSum="5">
+        <LinearLayout
+            android:id="@+id/marketContent"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1.8">
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/UpbitKeyTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:hint="가격">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textCursorDrawable="?attr/colorAccent"
+                    android:inputType="number"
+                    android:text="123,456,789"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/UpbitKeyTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:hint="RSI">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textCursorDrawable="?attr/colorAccent"
+                    android:inputType="number"
+                    android:text="20.09"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/UpbitKeyTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:hint="스토캐스틱 fast">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textCursorDrawable="?attr/colorAccent"
+                    android:inputType="number"
+                    android:text="12.55"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/UpbitKeyTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:hint="스토캐스틱 slow">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textCursorDrawable="?attr/colorAccent"
+                    android:inputType="number"
+                    android:text="8.37"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/underline"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                style="@style/underline"/>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/UpbitKeyTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:hint="가용자산">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textCursorDrawable="?attr/colorAccent"
+                    android:text="123,456"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/UpbitKeyTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:hint="매수금액">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textCursorDrawable="?attr/colorAccent"
+                    android:text="100,000"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/UpbitKeyTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:hint="매수량">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textCursorDrawable="?attr/colorAccent"
+                    android:text="0.01"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/vertical_line"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
+            style="@style/vertical_line"/>
+        <FrameLayout
+            android:id="@+id/autoTradingTabContent"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2.9"/>
+    </LinearLayout>
+
 </RelativeLayout>

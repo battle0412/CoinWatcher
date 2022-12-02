@@ -19,7 +19,7 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.github.mikephil.charting.utils.MPPointF
-import com.im.app.coinwatcher.JWT.GeneratorJWT.JWTGenerator.generateJWT
+import com.im.app.coinwatcher.JWT.GeneratorJWT
 import com.im.app.coinwatcher.common.IS_NIGHT
 import com.im.app.coinwatcher.common.decimalFormat
 import com.im.app.coinwatcher.common.getGsonList
@@ -110,7 +110,7 @@ class MyAssetsFragment: Fragment() {
     @RequiresApi(Build.VERSION_CODES.R)
     private fun initMyAssets(){
         CoroutineScope(Dispatchers.IO).launch{
-            val rest = RetrofitOkHttpManagerUpbit(generateJWT()).restService
+            val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
             val responseStr = responseUpbitAPI(rest.requestAccounts())
             val accountList = getGsonList(responseStr, Accounts::class.java)
             var assetKrw = 0F

@@ -7,6 +7,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.await
 import java.lang.reflect.Type
 import java.text.DecimalFormat
@@ -25,7 +27,16 @@ fun getQueryString(parameters: HashMap<String, String>): String {
 
     return queryElements.joinToString(
         separator = "&",
-        prefix = "?"
+        //prefix = "?"
+    )
+}
+fun getQueryString(parameters: Map<String, String>): String {
+    val queryElements = mutableListOf<String>()
+    parameters.forEach { (key, value) -> queryElements.add("$key=$value") }
+
+    return queryElements.joinToString(
+        separator = "&",
+        //prefix = "?"
     )
 }
 
@@ -57,6 +68,29 @@ suspend fun responseUpbitAPI(call: Call<ResponseBody>): String {
             }
         }
     return resultStr
+}
+
+class UpbitAPIService(private val call: Call<ResponseBody>) {
+    fun responseUpbitAPI(): String {
+        var resultStr = ""
+        call.enqueue(object: Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    try {
+                        resultStr = response.body()!!.string()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                } else {
+                    resultStr = response.errorBody()!!.string()
+                }
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+
+            }
+        })
+        return resultStr
+    }
 }
 
 /**
@@ -198,3 +232,18 @@ object SoundSearcher {
     }
 }
 //초성 검색 끝 ------------
+fun getUnits(): ArrayList<String>{
+    val unitArr = ArrayList<String>()
+    unitArr.add("1분")
+    unitArr.add("3분")
+    unitArr.add("5분")
+    unitArr.add("10분")
+    unitArr.add("15분")
+    unitArr.add("30분")
+    unitArr.add("60분")
+    unitArr.add("240분")
+    unitArr.add("일")
+    unitArr.add("주")
+    unitArr.add("월")
+    return unitArr
+}

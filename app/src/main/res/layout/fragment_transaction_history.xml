@@ -17,14 +17,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="4"
             android:text="@string/created_at"
-            android:textAlignment="center"
-            />
+            style="@style/subTitle"
+            android:textAlignment="center" />
         <TextView
             android:id="@+id/market"
             android:layout_weight="3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/market"
+            style="@style/subTitle"
             android:textAlignment="center"/>
         <TextView
             android:id="@+id/side"
@@ -32,6 +33,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/side"
+            style="@style/subTitle"
             android:textAlignment="center"/>
         <TextView
             android:id="@+id/priceOrder"
@@ -39,6 +41,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/priceOrder"
+            style="@style/subTitle"
             android:textAlignment="center"/>
         <TextView
             android:id="@+id/executed_volume"
@@ -46,6 +49,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/executed_volume"
+            style="@style/subTitle"
             android:textAlignment="center"/>
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView

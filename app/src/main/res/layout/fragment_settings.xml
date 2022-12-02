@@ -9,15 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="10"
-        android:layout_marginBottom="20dp"
         android:orientation="horizontal">
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:textSize="25sp"
+            android:textSize="20sp"
             style="@style/UpbitTextTheme"
             android:text="@string/alarm"/>
+
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/alarmSwitching"
             android:layout_width="0dp"
@@ -26,18 +26,32 @@
             android:layout_weight="4"/>
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/alarmInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@+id/alarm">
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:textSize="17sp"
+            android:textColor="@color/subTitle"
+            style="@style/UpbitTextTheme"
+            android:text="@string/alarmInfo"/>
+    </LinearLayout>
+    <LinearLayout
         android:id="@+id/modechange"
-        android:layout_below="@+id/alarm"
+        android:layout_below="@+id/alarmInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:weightSum="10"
-        android:layout_marginBottom="20dp"
         android:orientation="horizontal">
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="6"
-            android:textSize="25sp"
+            android:textSize="20sp"
             style="@style/UpbitTextTheme"
             android:text="@string/modechange"/>
         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -48,18 +62,40 @@
             android:layout_weight="4"/>
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/keychange"
-        android:layout_below="@+id/modechange"
+        android:id="@+id/modechangeInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@+id/modechange">
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textColor="@color/subTitle"
+        style="@style/UpbitTextTheme"
+        android:text="@string/modechangeInfo"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/keychange"
+        android:layout_below="@+id/modechangeInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:orientation="vertical">
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="25sp"
+            android:textSize="20sp"
             style="@style/UpbitTextTheme"
             android:text="@string/keychange"/>
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:textSize="17sp"
+            android:textColor="@color/subTitle"
+            style="@style/UpbitTextTheme"
+            android:text="@string/keychangeInfo"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/accessKeySave"
             style="@style/UpbitButtonTheme"

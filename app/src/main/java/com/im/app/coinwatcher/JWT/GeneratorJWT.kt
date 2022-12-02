@@ -15,18 +15,19 @@ import java.util.*
 
 //JSON Web Token
 class GeneratorJWT {
-    companion object JWTGenerator {
+    companion object {
         @RequiresApi(Build.VERSION_CODES.N)
-        fun generateJWT(params: HashMap<String, String>? = null): String{
+        fun generateJWT(params: Map<String, String>? = null): String {
             /*val diff = System.currentTimeMillis()
             val nonce = diff.toInt()*/
 
             val algorithm: Algorithm = Algorithm.HMAC256(SECRET_KEY)
-            val jwtToken = with(JWT.create()){
+            val jwtToken = with(JWT.create()) {
                 withClaim("access_key", ACCESS_KEY)
                 withClaim("nonce", UUID.randomUUID().toString())
-                if(params != null){
+                if (params != null) {
                     val paramStr = getQueryString(params)
+
                     val md = MessageDigest.getInstance("SHA-512")
                     md.update(paramStr.toByteArray(Charsets.UTF_8))
                     val hashByteArray = String.format("%0128x", BigInteger(1, md.digest()))
@@ -38,12 +39,12 @@ class GeneratorJWT {
             }
             return "Bearer $jwtToken"
         }
-
-        /*fun test(params: HashMap<String, String>): String{
+    }
+        /*fun test(params: Map<String, String>): String{
             val accessKey = ACCESS_KEY
             val secretKey = SECRET_KEY
 
-            val queryString = getQueryString(params)
+            val queryString = getQueryString(params) //"market=KRW-BTC&side=bid&volume=&price=5000&ord_type=price&identifier="
 
             val md = MessageDigest.getInstance("SHA-512")
             md.update(queryString.toByteArray(charset("utf8")))
@@ -60,7 +61,6 @@ class GeneratorJWT {
 
             return "Bearer $jwtToken"
         }*/
-    }
 }
 
 

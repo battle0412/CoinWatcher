@@ -16,7 +16,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.im.app.coinwatcher.JWT.GeneratorJWT.JWTGenerator.generateJWT
+import com.im.app.coinwatcher.JWT.GeneratorJWT
 import com.im.app.coinwatcher.common.SoundSearcher
 import com.im.app.coinwatcher.common.getGsonList
 import com.im.app.coinwatcher.common.responseUpbitAPI
@@ -84,7 +84,7 @@ class CoinListFragment: Fragment() {
         val kwrMarketStr = tmpList.joinToString(
             separator = ","
         )
-        val rest = RetrofitOkHttpManagerUpbit(generateJWT()).restService
+        val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
         val responseBody = responseUpbitAPI(rest.requestMarketsTicker(kwrMarketStr))
         marketList = getGsonList(responseBody, MarketTicker::class.java)
             .sortedByDescending { MarketTicker -> MarketTicker.acc_trade_price_24h } as MutableList<MarketTicker>
@@ -93,7 +93,7 @@ class CoinListFragment: Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private suspend fun initMarketList(){
-        val rest = RetrofitOkHttpManagerUpbit(generateJWT()).restService
+        val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
         val responseStr = responseUpbitAPI(rest.requestMarketAll())
         getGsonList(responseStr, MarketAll::class.java)
             .filter { marketAll -> marketAll.market.contains("KRW") }//마켓 목록중 원화만 취급

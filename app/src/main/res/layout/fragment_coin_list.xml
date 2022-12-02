@@ -27,6 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="4.5"
             android:text="@string/coinName"
+            style="@style/subTitle"
             android:textAlignment="center"
             />
         <TextView
@@ -35,6 +36,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/trade_price"
+            style="@style/subTitle"
             android:textAlignment="center"/>
         <TextView
             android:id="@+id/change_rate"
@@ -42,6 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/change_rate"
+            style="@style/subTitle"
             android:textAlignment="center"/>
         <TextView
             android:id="@+id/acc_trade_price_24h"
@@ -49,6 +52,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/acc_trade_price_24h"
+            style="@style/subTitle"
             android:textAlignment="center"/>
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView

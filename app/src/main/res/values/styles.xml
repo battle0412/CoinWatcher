@@ -6,6 +6,9 @@
     <style name="underline">
         <item name="android:background">@drawable/underline</item>
     </style>
+    <style name="vertical_line">
+        <item name="android:background">@drawable/vertical_line</item>
+    </style>
     <style name="UpbitSwitchTheme" parent="Widget.AppCompat.CompoundButton.Switch">
     </style>
     <style name="UpbitKeyTheme" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -36,5 +39,9 @@
     </style>
     <style name="tab_textSize" parent="Widget.MaterialComponents.TabLayout">
         <item name="android:textSize">20sp</item>
+    </style>
+    <style name="subTitle" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/subTitle</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

@@ -2,6 +2,7 @@ package com.im.app.coinwatcher
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -21,15 +22,18 @@ import kotlin.system.exitProcess
  * common에 preference 추가 singleton으로
  */
 class MainActivity : AppCompatActivity() {
-    private lateinit var drawerLayout: DrawerLayout
+    //private lateinit var drawerLayout: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(IS_NIGHT)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         else
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
         setContentView(R.layout.activity_main)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
 
         if(savedInstanceState == null){
             with(supportFragmentManager.beginTransaction()){
@@ -54,14 +58,21 @@ class MainActivity : AppCompatActivity() {
             true
         }
 */
-
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
         bottomNavigation.setOnItemSelectedListener { item ->
             val instance = when(item.itemId){
-                R.id.coinList -> CoinListFragment.getInstance()
-                R.id.autoTrading -> AutoTradingFragment.getInstance()
-                R.id.fundingHistory -> FundingHistoryFragment.getInstance()
-                R.id.settings -> SettingsFragment.getInstance()
+                R.id.coinList -> {
+                    CoinListFragment.getInstance()
+                }
+                R.id.autoTrading -> {
+                    AutoTradingFragment.getInstance()
+                }
+                R.id.fundingHistory -> {
+                    FundingHistoryFragment.getInstance()
+                }
+                R.id.settings -> {
+                    SettingsFragment.getInstance()
+                }
                 else -> throw IllegalStateException("하단 메뉴바 목록 오류 item.itemId: ${item.itemId}")
             }
             with(supportFragmentManager.beginTransaction()){
