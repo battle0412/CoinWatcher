@@ -35,12 +35,21 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(true)
 
-        if(savedInstanceState == null){
+        if(intent.extras != null){
             with(supportFragmentManager.beginTransaction()){
-                add(R.id.container, CoinListFragment.getInstance())
+                add(R.id.container, AutoTradingFragment.newInstance(intent))
                 commit()
             }
+        } else {
+            if(savedInstanceState == null){
+                with(supportFragmentManager.beginTransaction()){
+                    add(R.id.container, CoinListFragment.newInstance())
+                    commit()
+                }
+            }
         }
+
+
 /*
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -62,16 +71,16 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation.setOnItemSelectedListener { item ->
             val instance = when(item.itemId){
                 R.id.coinList -> {
-                    CoinListFragment.getInstance()
+                    CoinListFragment.newInstance()
                 }
                 R.id.autoTrading -> {
-                    AutoTradingFragment.getInstance()
+                    AutoTradingFragment.newInstance()
                 }
                 R.id.fundingHistory -> {
-                    FundingHistoryFragment.getInstance()
+                    FundingHistoryFragment.newInstance()
                 }
                 R.id.settings -> {
-                    SettingsFragment.getInstance()
+                    SettingsFragment.newInstance()
                 }
                 else -> throw IllegalStateException("하단 메뉴바 목록 오류 item.itemId: ${item.itemId}")
             }

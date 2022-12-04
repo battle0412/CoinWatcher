@@ -21,7 +21,7 @@ class FundingHistoryFragment: Fragment() {
 
         if(savedInstanceState == null){
             with(activity.supportFragmentManager.beginTransaction()){
-                add(R.id.historyTabContent, MyAssetsFragment.getInstance())
+                add(R.id.historyTabContent, MyAssetsFragment.newInstance())
                     .commit()
             }
         }
@@ -29,8 +29,8 @@ class FundingHistoryFragment: Fragment() {
         tabLayout.addOnTabSelectedListener(object: OnTabSelectedListener{
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val instance = when(tab.position){
-                    0 -> MyAssetsFragment.getInstance()
-                    1 -> TransactionHistoryFragment.getInstance()
+                    0 -> MyAssetsFragment.newInstance()
+                    1 -> TransactionHistoryFragment.newInstance()
                     else -> throw IllegalStateException("Unexpected value: ${tab.position}")
                 }
 
@@ -48,6 +48,6 @@ class FundingHistoryFragment: Fragment() {
     }
 
     companion object{
-        fun getInstance() = FundingHistoryFragment()
+        fun newInstance() = FundingHistoryFragment()
     }
 }

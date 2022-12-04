@@ -1,8 +1,13 @@
 package com.im.app.coinwatcher.common
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.im.app.coinwatcher.JWT.GeneratorJWT
+import com.im.app.coinwatcher.json_data.Candles
+import com.im.app.coinwatcher.okhttp_retrofit.RetrofitOkHttpManagerUpbit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
@@ -12,9 +17,10 @@ import retrofit2.Response
 import retrofit2.await
 import java.lang.reflect.Type
 import java.text.DecimalFormat
+import kotlin.math.abs
 
 fun toastMessage(message: String){
-    Toast.makeText(CoinWatcherApplication.getAppInstance(), message, Toast.LENGTH_SHORT).show()
+    Toast.makeText(CoinWatcherApplication.getAppInstance(), message, Toast.LENGTH_LONG).show()
 }
 
 /**
@@ -246,4 +252,158 @@ fun getUnits(): ArrayList<String>{
     unitArr.add("주")
     unitArr.add("월")
     return unitArr
+}
+
+fun unitMapping(unitStr: String?): String{
+    return when(unitStr){
+        "1분" -> "1"
+        "3분" -> "3"
+        "5분" -> "5"
+        "10분" -> "10"
+        "15분" -> "15"
+        "30분" -> "30"
+        "60분" -> "60"
+        "240분" -> "240"
+        "일" -> "days"
+        "주" -> "weeks"
+        "월" -> "months"
+        else -> "days"
+    }
+}
+
+fun calculateRSI(minuteCandles: MutableList<Candles>): Double {
+    var averageUp = 0.0
+    var averageDown = 0.0
+    val upList = mutableListOf<Double>()
+    val downList = mutableListOf<Double>()
+    var diff: Double
+    for(i in 1 until minuteCandles.size){
+        diff = minuteCandles[i-1].trade_price - minuteCandles[i].trade_price
+        if(i > minuteCandles.size - RSI_DAY_CNT){
+            when(diff >= 0.0){
+                true -> averageUp += diff
+                else -> averageDown += diff
+            }
+        } else {
+            when(diff >= 0.0){
+                true -> {
+                    upList.add(diff)
+                    downList.add(0.0)
+                }
+                else -> {
+                    upList.add(0.0)
+                    downList.add(abs(diff))
+                }
+            }
+        }
+    }
+    averageDown = abs(averageDown)
+    averageUp /= RSI_DAY_CNT
+    averageDown /= RSI_DAY_CNT
+    val resultAU = exponentialMovingAverage(averageUp, upList, upList.size - 1)
+    val resultAD = exponentialMovingAverage(averageDown, downList, downList.size - 1)
+
+    return (resultAU / resultAD) / (1 + (resultAU / resultAD)) * 100;
+}
+//지수평균이동
+tailrec fun exponentialMovingAverage(average: Double, lst:MutableList<Double>, listCount: Int): Double{
+    return if(listCount < 0) average
+    else exponentialMovingAverage(
+        (average * (RSI_DAY_CNT - 1) + lst[listCount]) / RSI_DAY_CNT
+        , lst
+        , listCount - 1
+    )
+}
+
+fun stochasticFastSlow(minuteCandles: MutableList<Candles>): MutableList<Double>{
+    var currentPrice = 0.0
+    var maxPrice = 0.0
+    var minPrice = 0.0
+    val fastkList = mutableListOf<Double>()
+    val fastdList = mutableListOf<Double>()
+    val slowkList = mutableListOf<Double>()
+    val slowdList = mutableListOf<Double>()
+    val slowList = mutableListOf<Double>()
+    for(i in 0 until minuteCandles.size){
+        if(minuteCandles.size - i < STOCHASTIC_N) break
+
+        currentPrice = 0.0
+        maxPrice = 0.0
+        minPrice = 0.0
+
+        for(j in 0 until STOCHASTIC_N){
+            //종가가 아닌 최고가 최저가 사용해야함
+            if(currentPrice == 0.0)
+                currentPrice = minuteCandles[i + j].trade_price;
+            if(maxPrice == 0.0)
+                maxPrice = minuteCandles[i + j].high_price;
+            if(minPrice == 0.0)
+                minPrice = minuteCandles[i + j].low_price;
+            if(maxPrice < minuteCandles[i + j].high_price)
+                maxPrice = minuteCandles[i + j].high_price;
+            if(minPrice > minuteCandles[i + j].low_price)
+                minPrice = minuteCandles[i + j].low_price;
+        }
+        fastkList.add((currentPrice - minPrice) / (maxPrice - minPrice) * 100)
+    }
+    //슬로캐스틱 fast d = 슬로캐스틱 slow k
+    slowList.add(movingAverage(fastkList[fastkList.size - 1], fastkList, fastkList.size - 1, fastdList))
+    fastdList.reverse()
+    slowList.add(movingAverage(fastdList[fastdList.size - 1], fastdList, fastdList.size - 1))
+    //slowkList.reverse()
+    return slowList
+}
+
+//이동평균
+tailrec fun movingAverage(average: Double, lst: MutableList<Double>, listCount: Int, resultList: MutableList<Double>): Double{
+    var ma = 0.0
+
+    return if(listCount < STOCHASTIC_M - 1) average
+    else {
+        for(i in 0 until STOCHASTIC_M){
+            ma += lst[listCount - i]
+        }
+        resultList.add(ma / STOCHASTIC_M)
+        movingAverage(
+            ma / STOCHASTIC_M, lst, listCount - 1, resultList
+        )
+    }
+}
+
+tailrec fun movingAverage(average: Double, lst: MutableList<Double>, listCount: Int): Double{
+    var ma = 0.0
+
+    return if(listCount < STOCHASTIC_M - 1) average
+    else {
+        for(i in 0 until STOCHASTIC_M){
+            ma += lst[listCount - i]
+        }
+        movingAverage(
+            ma / STOCHASTIC_M, lst, listCount - 1
+        )
+    }
+}
+
+fun numberFormat(input: String): String{
+    return input.replace(",", "")
+}
+
+@RequiresApi(Build.VERSION_CODES.N)
+suspend fun getCandles(marketItem: String, unitItem: String): MutableList<Candles>{
+        val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
+
+        val responseStr = if (unitItem == "일" || unitItem == "주" || unitItem == "월")
+            responseUpbitAPI(rest.requestCandles(unitMapping(unitItem), marketItem, 200))
+        else
+            responseUpbitAPI(
+                rest.requestMinuteCandles(
+                    unitMapping(unitItem).toInt(),
+                    marketItem,
+                    200
+                )
+            )
+        return  if (unitItem == "일" || unitItem == "주" || unitItem == "월")
+            getGsonList(responseStr, Candles::class.java)
+        else
+            getGsonList(responseStr, Candles::class.java)
 }

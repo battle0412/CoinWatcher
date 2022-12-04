@@ -50,7 +50,7 @@
             android:dropDownHeight="120dp"
             android:layout_weight="3"/>
         <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/alarmSwitching"
+            android:id="@+id/autoTradingSwitching"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             style="@style/UpbitSwitchTheme"
@@ -74,13 +74,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:hint="가격">
+                android:hint="@string/price">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/priceTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textCursorDrawable="?attr/colorAccent"
                     android:inputType="number"
-                    android:text="123,456,789"
+                    android:enabled="false"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
@@ -88,13 +89,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:hint="RSI">
+                android:hint="@string/rsi">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/rsiTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textCursorDrawable="?attr/colorAccent"
                     android:inputType="number"
-                    android:text="20.09"
+                    android:enabled="false"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
@@ -102,13 +104,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:hint="스토캐스틱 fast">
+                android:hint="@string/stochasticSlowK">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/stochasticSlowKTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textCursorDrawable="?attr/colorAccent"
                     android:inputType="number"
-                    android:text="12.55"
+                    android:enabled="false"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
@@ -116,13 +119,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:hint="스토캐스틱 slow">
+                android:hint="@string/stochasticSlowD">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/stochasticSlowDTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textCursorDrawable="?attr/colorAccent"
                     android:inputType="number"
-                    android:text="8.37"
+                    android:enabled="false"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
             <TextView
@@ -135,12 +139,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:hint="가용자산">
+                android:hint="@string/my_asset">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/my_assetTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textCursorDrawable="?attr/colorAccent"
-                    android:text="123,456"
+                    android:enabled="false"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
@@ -148,12 +153,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:hint="매수금액">
+                android:hint="@string/my_locked">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/my_lockedTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textCursorDrawable="?attr/colorAccent"
-                    android:text="100,000"
+                    android:enabled="false"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
@@ -161,12 +167,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:hint="매수량">
+                android:hint="@string/volume">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/volumeTV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textCursorDrawable="?attr/colorAccent"
-                    android:text="0.01"
+                    android:enabled="false"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
@@ -182,5 +189,4 @@
             android:layout_height="match_parent"
             android:layout_weight="2.9"/>
     </LinearLayout>
-
 </RelativeLayout>

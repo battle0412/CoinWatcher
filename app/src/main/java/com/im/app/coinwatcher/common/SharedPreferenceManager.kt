@@ -5,8 +5,12 @@ import android.content.SharedPreferences
 
 object SharedPreferenceManager {
     private lateinit var sharedPreference: SharedPreferences
-    fun getPreference(context: Context): SharedPreferences{
-        sharedPreference = context.getSharedPreferences("CoinWatcherSettings", Context.MODE_PRIVATE)
+    fun getSettingsPreference(context: Context): SharedPreferences{
+        sharedPreference = context.getSharedPreferences("GZASettings", Context.MODE_PRIVATE)
+        return sharedPreference
+    }
+    fun getAutoTradingPreference(context: Context): SharedPreferences{
+        sharedPreference = context.getSharedPreferences("GZAutoTrading", Context.MODE_PRIVATE)
         return sharedPreference
     }
 }

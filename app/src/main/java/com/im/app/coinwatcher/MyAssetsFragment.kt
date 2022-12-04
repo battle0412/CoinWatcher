@@ -219,6 +219,6 @@ class MyAssetsFragment: Fragment() {
         }
     }
     companion object{
-        fun getInstance() = MyAssetsFragment()
+        fun newInstance() = MyAssetsFragment()
     }
 }

@@ -16,6 +16,7 @@
     <string name="my_asset">내 보유자산</string>
     <string name="my_krw">보유KRW</string>
     <string name="my_buy">총매수</string>
+    <string name="my_locked">체결대기</string>
     <string name="my_evaluation">총평가</string>
     <string name="my_asset_total">총 보유자산</string>
     <string name="my_profit_and_loss">손익평가</string>
@@ -39,8 +40,10 @@
     <string name="condition">조건</string>
     <string name="item">종목</string>
     <string name="rsi">RSI</string>
-    <string name="stochasticFast">스토캐스틱Fast</string>
-    <string name="stochasticSlow">스토캐스틱Slow</string>
+    <string name="stochasticSlowK">스토캐스틱S K</string>
+    <string name="stochasticSlowD">스토캐스틱S D</string>
+    <string name="stochasticSlowKFullName">StochasticSlow K</string>
+    <string name="stochasticSlowDFullName">StochasticSlow D</string>
     <string name="price">가격</string>
     <string name="remain">내 가용자산</string>
     <string name="more">이상</string>
@@ -52,5 +55,5 @@
     <string name="priceOrder">거래단가</string>
     <string name="executed_volume">거래금액</string>
     <string name="digits">".0123456789"</string>
-    <string name="quantity">수량</string>
+    <string name="volume">수량</string>
 </resources>

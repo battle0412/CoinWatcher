@@ -138,7 +138,7 @@ class CoinListFragment: Fragment() {
     }
 
     companion object{
-        fun getInstance() = CoinListFragment()
+        fun newInstance() = CoinListFragment()
     }
 
     override fun onDestroyView() {

@@ -25,7 +25,7 @@ class SettingsFragment: Fragment() {
         with(binding){
             alarmSwitching.isChecked = IS_RECEIVE_ALARM
             darkSwitching.isChecked = IS_NIGHT
-            val sharedPreferences = SharedPreferenceManager.getPreference(requireContext())
+            val sharedPreferences = SharedPreferenceManager.getSettingsPreference(requireContext())
 
             alarmSwitching.setOnCheckedChangeListener { _, isChecked ->
                 sharedPreferences.edit().putBoolean("IS_RECEIVE_ALARM", isChecked).apply()
@@ -54,6 +54,6 @@ class SettingsFragment: Fragment() {
     }
 
     companion object{
-        fun getInstance() = SettingsFragment()
+        fun newInstance() = SettingsFragment()
     }
 }

@@ -49,9 +49,9 @@
                 android:layout_marginStart="10dp"
                 android:layout_weight="6"
                 style="@style/UpbitTextTheme"
-                android:text="@string/stochasticFast"/>
+                android:text="@string/stochasticSlowKFullName"/>
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/stochasticFastMore"
+                android:id="@+id/stochasticSlowKMore"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textCursorDrawable="?attr/colorAccent"
@@ -75,9 +75,9 @@
                 android:layout_marginStart="10dp"
                 android:layout_weight="6"
                 style="@style/UpbitTextTheme"
-                android:text="@string/stochasticSlow"/>
+                android:text="@string/stochasticSlowDFullName"/>
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/stochasticSlowMore"
+                android:id="@+id/stochasticSlowDMore"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textCursorDrawable="?attr/colorAccent"
@@ -128,9 +128,9 @@
                 android:layout_marginStart="10dp"
                 android:layout_weight="4"
                 style="@style/UpbitTextTheme"
-                android:text="@string/quantity"/>
+                android:text="@string/volume"/>
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/buyPrice"
+                android:id="@+id/volume"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textCursorDrawable="?attr/colorAccent"

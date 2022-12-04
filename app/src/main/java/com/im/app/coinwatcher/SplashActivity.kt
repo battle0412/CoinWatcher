@@ -18,13 +18,13 @@ class SplashActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        /*val test = SharedPreferenceManager.getPreference(this).edit()
+        /*val test = SharedPreferenceManager.getSettingsPreference(this).edit()
         test.remove("ACCESS_KEY")
         test.remove("SECRET_KEY")
         test.apply()*/
 
 
-        with(SharedPreferenceManager.getPreference(this)){
+        with(SharedPreferenceManager.getSettingsPreference(this)){
             if(this.getString("ACCESS_KEY", "") == ""
                 || this.getString("SECRET_KEY", "") == ""){
                  val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){

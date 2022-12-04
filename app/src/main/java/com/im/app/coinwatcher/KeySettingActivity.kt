@@ -18,7 +18,7 @@ class KeySettingActivity: AppCompatActivity() {
         }
         with(binding){
             saveButton.setOnClickListener {
-                val sharedPreference = getSharedPreferences("CoinWatcherSettings", Context.MODE_PRIVATE)
+                val sharedPreference = getSharedPreferences("GZASettings", Context.MODE_PRIVATE)
                 with(sharedPreference.edit()){
                     IS_NIGHT = false
                     IS_RECEIVE_ALARM = true
@@ -33,7 +33,7 @@ class KeySettingActivity: AppCompatActivity() {
                 }
                 /*if(accesskeyED.text.toString().isNotEmpty()
                     && secretkeyED.text.toString().isNotEmpty()){
-                    with(SharedPreferenceManager.getPreference(this@KeySettingActivity)){
+                    with(SharedPreferenceManager.getSettingsPreference(this@KeySettingActivity)){
                         IS_NIGHT = false
                         IS_RECEIVE_ALARM = true
                         ACCESS_KEY = accesskeyED.text.toString()

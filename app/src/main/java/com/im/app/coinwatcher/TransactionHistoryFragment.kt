@@ -20,6 +20,6 @@ class TransactionHistoryFragment: Fragment() {
         return binding.root
     }
     companion object{
-        fun getInstance() = TransactionHistoryFragment()
+        fun newInstance() = TransactionHistoryFragment()
     }
 }

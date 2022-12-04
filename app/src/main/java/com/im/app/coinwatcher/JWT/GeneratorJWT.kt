@@ -46,7 +46,7 @@ class GeneratorJWT {
 
             val queryString = getQueryString(params) //"market=KRW-BTC&side=bid&volume=&price=5000&ord_type=price&identifier="
 
-            val md = MessageDigest.getInstance("SHA-512")
+            val md = MessageDigest.newInstance("SHA-512")
             md.update(queryString.toByteArray(charset("utf8")))
 
             val queryHash = String.format("%0128x", BigInteger(1, md.digest()))
@@ -79,7 +79,7 @@ for(Map.Entry<String, String> entity : params.entrySet()) {
 
 String queryString = String.join("&", queryElements.toArray(new String[0]));
 
-MessageDigest md = MessageDigest.getInstance("SHA-512");
+MessageDigest md = MessageDigest.newInstance("SHA-512");
 md.update(queryString.getBytes("UTF-8"));
 
 String queryHash = String.format("%0128x", new BigInteger(1, md.digest()));

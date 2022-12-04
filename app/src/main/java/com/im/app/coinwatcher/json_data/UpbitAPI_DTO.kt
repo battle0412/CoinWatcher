@@ -1,5 +1,7 @@
 package com.im.app.coinwatcher.json_data
 
+import android.content.Intent
+
 
 /*
 시세 캔들 조회 -> 분(Minute)캔들
@@ -26,7 +28,7 @@ data class MinuteCandles(
     var timestamp: Long,
     var candle_acc_trade_price: Double,
     var candle_acc_trade_volume: Double,
-    var unit: Integer
+    var unit: Int
 )
 /*
 시세 캔들 조회 -> 일(Day)주(Week)월(Month)캔들
@@ -57,6 +59,7 @@ data class Candles(
     var timestamp: Long,
     var candle_acc_trade_price: Double,
     var candle_acc_trade_volume: Double,
+    var unit: Int,
     var prev_closing_price: Double,
     var change_price: Double,
     var change_rate: Double,
