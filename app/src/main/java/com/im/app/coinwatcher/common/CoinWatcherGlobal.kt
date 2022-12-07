@@ -15,3 +15,4 @@ const val STOCHASTIC_T = 5
 //백그라운드 서비스 Notify Channel
 const val CHANNEL_ID = "AutoTrading"
 const val CHANNEL_NAME = "자동매매"
+

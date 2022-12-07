@@ -1,16 +1,14 @@
 package com.im.app.coinwatcher.common
 
-import com.google.gson.JsonObject
-import com.im.app.coinwatcher.json_data.ReqOrder
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.util.UUID
 
 interface UpbitRestService {
     /*
@@ -58,7 +56,7 @@ interface UpbitRestService {
         @Query("price") price: String,
         @Query("ord_type") ord_type: String,
         @Query("identifier") identifier: String*/
-        @Body order: RequestBody
+        @Body orders: RequestBody
     ): Call<ResponseBody>
 
     /*
@@ -79,5 +77,13 @@ interface UpbitRestService {
     @GET("v1/ticker")
     fun requestMarketsTicker(
         @Query("markets") market: String
+    ): Call<ResponseBody>
+
+    /*
+    주문번호로 주문조회
+     */
+    @GET("v1/order")
+    fun requestOrder(
+        @Query("uuid") uuid: String
     ): Call<ResponseBody>
 }

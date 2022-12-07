@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@+id/underline"
         app:layout_constraintLeft_toRightOf="@+id/trade_price"
-        app:layout_constraintWidth_percent="0.2"
+        app:layout_constraintWidth_percent="0.175"
         android:layout_marginTop="10dp"
         android:textAlignment="textEnd"/>
     <TextView
@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="@+id/underline"
         app:layout_constraintLeft_toRightOf="@+id/change_rate"
-        app:layout_constraintWidth_percent="0.25"
+        app:layout_constraintWidth_percent="0.275"
         android:layout_marginTop="10dp"
         android:textAlignment="textEnd"/>
     <TextView

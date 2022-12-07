@@ -25,7 +25,7 @@
             android:id="@+id/coinName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="4.5"
+            android:layout_weight="6"
             android:text="@string/coinName"
             style="@style/subTitle"
             android:textAlignment="center"
@@ -40,7 +40,7 @@
             android:textAlignment="center"/>
         <TextView
             android:id="@+id/change_rate"
-            android:layout_weight="5.5"
+            android:layout_weight="3.5"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/change_rate"
@@ -48,7 +48,7 @@
             android:textAlignment="center"/>
         <TextView
             android:id="@+id/acc_trade_price_24h"
-            android:layout_weight="5"
+            android:layout_weight="5.5"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/acc_trade_price_24h"

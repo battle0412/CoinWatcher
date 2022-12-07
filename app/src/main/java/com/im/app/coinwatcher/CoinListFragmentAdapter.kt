@@ -2,6 +2,7 @@ package com.im.app.coinwatcher
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.im.app.coinwatcher.common.decimalFormat
+import com.im.app.coinwatcher.databinding.FragmentAutoTradingBinding
 import com.im.app.coinwatcher.databinding.RecyclerCoinItemBinding
 import com.im.app.coinwatcher.json_data.MarketAll
 import com.im.app.coinwatcher.json_data.MarketTicker
@@ -16,6 +18,7 @@ import com.im.app.coinwatcher.json_data.MarketTicker
 
 class CoinListFragmentAdapter(private var marketList: MutableList<MarketTicker>
 , private val kwrMap: HashMap<String, MarketAll>
+, private val owner: CoinListFragment
 ): RecyclerView.Adapter<CoinListFragmentAdapter.CoinListViewHolder>() {
     inner class CoinListViewHolder(val binding: RecyclerCoinItemBinding):
             RecyclerView.ViewHolder(binding.root)
@@ -54,12 +57,10 @@ class CoinListFragmentAdapter(private var marketList: MutableList<MarketTicker>
                     else -> {}
                 }
             }
-            /*root.setOnLongClickListener {
-                val intent = Intent()
-                intent.putExtra("market", marketList[position].market)
-                owner.startActivity(intent)
-                true
-            }*/
+            root.setOnClickListener {
+                val bottomSheet = BottomSheetFragment.newInstance(marketList[position].market)
+                bottomSheet.show(owner.childFragmentManager, bottomSheet.tag)
+            }
         }
     }
     override fun getItemCount() = marketList.size

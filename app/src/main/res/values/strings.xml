@@ -56,4 +56,10 @@
     <string name="executed_volume">거래금액</string>
     <string name="digits">".0123456789"</string>
     <string name="volume">수량</string>
+    <!--차트-->
+    <string name="open">시가</string>
+    <string name="shadowH">고가</string>
+    <string name="shadowL">저가</string>
+    <string name="close">종가</string>
+    <string name="volumeTotal">거래량</string>
 </resources>

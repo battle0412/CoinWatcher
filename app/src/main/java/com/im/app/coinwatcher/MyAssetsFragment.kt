@@ -23,7 +23,7 @@ import com.im.app.coinwatcher.JWT.GeneratorJWT
 import com.im.app.coinwatcher.common.IS_NIGHT
 import com.im.app.coinwatcher.common.decimalFormat
 import com.im.app.coinwatcher.common.getGsonList
-import com.im.app.coinwatcher.common.responseUpbitAPI
+import com.im.app.coinwatcher.common.responseSyncUpbitAPI
 import com.im.app.coinwatcher.databinding.FragmentMyAssetsBinding
 import com.im.app.coinwatcher.json_data.Accounts
 import com.im.app.coinwatcher.okhttp_retrofit.RetrofitOkHttpManagerUpbit
@@ -111,7 +111,7 @@ class MyAssetsFragment: Fragment() {
     private fun initMyAssets(){
         CoroutineScope(Dispatchers.IO).launch{
             val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
-            val responseStr = responseUpbitAPI(rest.requestAccounts())
+            val responseStr = responseSyncUpbitAPI(rest.requestAccounts())
             val accountList = getGsonList(responseStr, Accounts::class.java)
             var assetKrw = 0F
             var assetKrwTotal = 0F

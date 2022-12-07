@@ -18,13 +18,12 @@ class GeneratorJWT {
     companion object {
         @RequiresApi(Build.VERSION_CODES.N)
         fun generateJWT(params: Map<String, String>? = null): String {
-            /*val diff = System.currentTimeMillis()
-            val nonce = diff.toInt()*/
-
             val algorithm: Algorithm = Algorithm.HMAC256(SECRET_KEY)
             val jwtToken = with(JWT.create()) {
                 withClaim("access_key", ACCESS_KEY)
                 withClaim("nonce", UUID.randomUUID().toString())
+                withClaim("expiresIn","1h")
+                    .withExpiresAt(Date(System.currentTimeMillis() + 30*1000))
                 if (params != null) {
                     val paramStr = getQueryString(params)
 

@@ -18,17 +18,17 @@ candle_acc_trade_volume	누적 거래량                 Double
 unit	                분 단위(유닛)               Integer
 */
 data class MinuteCandles(
-    var market: String,
-    var candle_date_time_utc: String,
-    var candle_date_time_kst: String,
-    var opening_price: Double,
-    var high_price: Double,
-    var low_price: Double,
-    var trade_price: Double,
-    var timestamp: Long,
-    var candle_acc_trade_price: Double,
-    var candle_acc_trade_volume: Double,
-    var unit: Int
+    var market: String = "",
+    var candle_date_time_utc: String = "",
+    var candle_date_time_kst: String = "",
+    var opening_price: Double = 0.0,
+    var high_price: Double = 0.0,
+    var low_price: Double = 0.0,
+    var trade_price: Double = 0.0,
+    var timestamp: Long = 0,
+    var candle_acc_trade_price: Double = 0.0,
+    var candle_acc_trade_volume: Double = 0.0,
+    var unit: Int = 0
 )
 /*
 시세 캔들 조회 -> 일(Day)주(Week)월(Month)캔들
@@ -49,22 +49,22 @@ converted_trade_price	종가 환산 화폐 단위로 환산된 가격(요청에 
 first_day_of_period	    캔들 기간의 가장 첫 날       String(주,월 캔들)
 */
 data class Candles(
-    var market: String,
-    var candle_date_time_utc: String,
-    var candle_date_time_kst: String,
-    var opening_price: Double,
-    var high_price: Double,
-    var low_price: Double,
-    var trade_price: Double,
-    var timestamp: Long,
-    var candle_acc_trade_price: Double,
-    var candle_acc_trade_volume: Double,
-    var unit: Int,
-    var prev_closing_price: Double,
-    var change_price: Double,
-    var change_rate: Double,
-    var converted_trade_price: Double,
-    var first_day_of_period: String
+    var market: String = "",
+    var candle_date_time_utc: String = "",
+    var candle_date_time_kst: String = "",
+    var opening_price: Double = 0.0,
+    var high_price: Double = 0.0,
+    var low_price: Double = 0.0,
+    var trade_price: Double = 0.0,
+    var timestamp: Long = 0,
+    var candle_acc_trade_price: Double = 0.0,
+    var candle_acc_trade_volume: Double = 0.0,
+    var unit: Int = 0,
+    var prev_closing_price: Double = 0.0,
+    var change_price: Double = 0.0,
+    var change_rate: Double = 0.0,
+    var converted_trade_price: Double = 0.0,
+    var first_day_of_period: String = ""
 )
 
 /*
@@ -86,19 +86,21 @@ executed_volume	    체결된 양	                NumberString
 trades_count	    해당 주문에 걸린 체결 수	Integer
  */
 data class Orders(
-    var uuid: String,
-    var side: String,
-    var ord_type: String,
-    var price: String,
-    var state: String,
-    var market: String,
-    var created_at: String,
-    var volume: String,
-    var remaining_volume: String,
-    var reserved_fee: String,
-    var paid_fee: String,
-    var executed_volume: String,
-    var trades_count: Integer
+    var uuid: String = "",
+    var side: String = "",
+    var ord_type: String = "",
+    var price: String = "",
+    var state: String = "",
+    var market: String = "",
+    var created_at: String = "",
+    var volume: String = "",
+    var remaining_volume: String = "",
+    var reserved_fee: String = "",
+    var remaining_fee: String = "",
+    var paid_fee: String = "",
+    var locked: String = "",
+    var executed_volume: String = "",
+    var trades_count: Int = 0
 )
 /*
 자산 -> 전체 계좌 조회
@@ -110,12 +112,12 @@ avg_buy_price_modified	매수평균가 수정 여부	        Boolean
 unit_currency	        평단가 기준 화폐	            String
 */
 data class Accounts(
-    var currency: String,
-    var balance: String,
-    var locked: String,
-    var avg_buy_price: String,
-    var avg_buy_price_modified: Boolean,
-    var unit_currency: String
+    var currency: String = "",
+    var balance: String = "",
+    var locked: String = "",
+    var avg_buy_price: String = "",
+    var avg_buy_price_modified: Boolean = false,
+    var unit_currency: String = ""
 )
 
 /*
@@ -126,10 +128,10 @@ market_warning	유의 종목 여부
 NONE (해당 사항 없음), CAUTION(투자유의)	    String
  */
 data class MarketAll(
-    var market: String,
-    var korean_name: String,
-    var english_name: String,
-    var market_warning: String
+    var market: String = "",
+    var korean_name: String = "",
+    var english_name: String = "",
+    var market_warning: String = ""
 )
 
 /*
@@ -162,45 +164,111 @@ timestamp	            타임스탬프	Long
 *위 응답의 change, change_price, change_rate, signed_change_price, signed_change_rate 필드들은 전일종가 대비 값입니다.
  */
 data class MarketTicker(
-    var market: String,
-    var trade_date: String,
-    var trade_time: String,
-    var trade_date_kst: String,
-    var trade_time_kst: String,
-    var trade_timestamp: Long,
-    var opening_price: Double,
-    var high_price: Double,
-    var low_price: Double,
-    var trade_price: Double,
-    var prev_closing_price: Double,
-    var change: String,
-    var change_price: Double,
-    var change_rate: Double,
-    var signed_change_price: Double,
-    var signed_change_rate: Double,
-    var trade_volume: Double,
-    var acc_trade_price: Double,
-    var acc_trade_price_24h: Double,
-    var acc_trade_volume: Double,
-    var acc_trade_volume_24h: Double,
-    var highest_52_week_price: Double,
-    var highest_52_week_date: String,
-    var lowest_52_week_price: Double,
-    var lowest_52_week_date: String,
-    var timestamp: Long
+    var market: String = "",
+    var trade_date: String = "",
+    var trade_time: String = "",
+    var trade_date_kst: String = "",
+    var trade_time_kst: String = "",
+    var trade_timestamp: Long = 0,
+    var opening_price: Double = 0.0,
+    var high_price: Double = 0.0,
+    var low_price: Double = 0.0,
+    var trade_price: Double = 0.0,
+    var prev_closing_price: Double = 0.0,
+    var change: String = "",
+    var change_price: Double = 0.0,
+    var change_rate: Double = 0.0,
+    var signed_change_price: Double = 0.0,
+    var signed_change_rate: Double = 0.0,
+    var trade_volume: Double = 0.0,
+    var acc_trade_price: Double = 0.0,
+    var acc_trade_price_24h: Double = 0.0,
+    var acc_trade_volume: Double = 0.0,
+    var acc_trade_volume_24h: Double = 0.0,
+    var highest_52_week_price: Double = 0.0,
+    var highest_52_week_date: String = "",
+    var lowest_52_week_price: Double = 0.0,
+    var lowest_52_week_date: String = "",
+    var timestamp: Long = 0
+)
+/*
+uuid	주문의 고유 아이디	String
+side	주문 종류	String
+ord_type	주문 방식	String
+price	주문 당시 화폐 가격	NumberString
+state	주문 상태	String
+market	마켓의 유일키	String
+created_at	주문 생성 시간	DateString
+volume	사용자가 입력한 주문 양	NumberString
+remaining_volume	체결 후 남은 주문 양	NumberString
+reserved_fee	수수료로 예약된 비용	NumberString
+remaining_fee	남은 수수료	NumberString
+paid_fee	사용된 수수료	NumberString
+locked	거래에 사용중인 비용	NumberString
+executed_volume	체결된 양	NumberString
+trades_count	해당 주문에 걸린 체결 수	Integer
+trades	체결	Array[Object]
+trades.market	마켓의 유일 키	String
+trades.uuid	체결의 고유 아이디	String
+trades.price	체결 가격	NumberString
+trades.volume	체결 양	NumberString
+trades.funds	체결된 총 가격	NumberString
+trades.side	체결 종류	String
+trades.created_at	체결 시각	DateString*/
+data class Order(
+    var uuid: String = "",
+    var side: String = "",
+    var ord_type: String = "",
+    var price: String = "",
+    var state: String = "",
+    var market: String = "",
+    var created_at: String = "",
+    var volume: String = "",
+    var remaining_volume: String = "",
+    var reserved_fee: String = "",
+    var remaining_fee: String = "",
+    var paid_fee: String = "",
+    var locked: String = "",
+    var executed_volume: String = "",
+    var trades_count: String = "",
+    var trades: MutableList<Trade>
 )
 
-data class ReqOrder(
-    /*@Query("market") market: String,
-        @Query("side") side: String,
-        @Query("volume") volume: String,
-        @Query("price") price: String,
-        @Query("ord_type") ord_type: String,
-        @Query("identifier") identifier: String*/
-    var market: String,
-    var side: String,
-    var volume: String,
-    var price: String,
-    var ord_type: String,
-    var identifier: String
+data class Trade(
+    var market: String = "",
+    var uuid: String = "",
+    var price: String = "",
+    var volume: String = "",
+    var funds: String = "",
+    var side: String = "",
+    var created_at: String = "",
+    var trend: String = ""
 )
+
+data class TradeOrder(
+    var uuid: String = "",
+    var trades_uuid: String = "",
+    var side: String = "",
+    var ord_type: String = "",
+    var price: String = "",
+    var state: String = "",
+    var market: String = "",
+    var created_at: String = "",
+    var volume: String = "",
+    var remaining_volume: String = "",
+    var reserved_fee: String = "",
+    var remaining_fee: String = "",
+    var paid_fee: String = "",
+    var locked: String = "",
+    var executed_volume: String = "",
+    var trades_count: String = "",
+    var trades_market: String = "",
+    var trades_price: String = "",
+    var trades_volume: String = "",
+    var trades_funds: String = "",
+    var trades_side: String = "",
+    var trades_created_at: String = "",
+    var trades_trend: String = ""
+)
+
+

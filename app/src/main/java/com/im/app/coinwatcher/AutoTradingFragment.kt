@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
@@ -40,37 +42,51 @@ class AutoTradingFragment: Fragment() {
             setTextEditEnabled(!autoTradingSwitching.isChecked)
 
             autoTradingSwitching.setOnCheckedChangeListener { _, isChecked ->
-                val intent = Intent(requireContext(), AutoTradingService::class.java)
                 if(isChecked){
-                    coroutineMain.launch {
-                        setTextEditEnabled(false)
-                        toastMessage("자동매수 시작")
+                    if(!checkCondition()) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            autoTradingSwitching.isChecked = false
+                            toastMessage("주문금액을 확인하세요")
+                        }
+                        return@setOnCheckedChangeListener
+                    } else {
+
+                        requireActivity().startService(setPreferenceToIntent())
                     }
-                    val sharedPreferences = SharedPreferenceManager.getAutoTradingPreference(requireContext())
-                    intent.putExtra("autoTrading", true)
-                    intent.putExtra("market", marketItems.selectedItem.toString())
-                    intent.putExtra("unit", unitItems.selectedItem.toString())
-                    sharedPreferences.edit().putString("market", marketItems.selectedItem.toString()).apply()
-                    sharedPreferences.edit().putString("unit", unitItems.selectedItem.toString()).apply()
 
-                    intent.putExtra("rsiLess" , sharedPreferences.getString("rsiLess", ""))
-                    intent.putExtra("buySlowK" , sharedPreferences.getString("buySlowK", ""))
-                    intent.putExtra("buySlowD" , sharedPreferences.getString("buySlowD", ""))
-                    intent.putExtra("priceLess" , sharedPreferences.getString("priceLess", ""))
-                    intent.putExtra("buyPrice" , sharedPreferences.getString("buyPrice", ""))
-
-                    intent.putExtra("rsiMore" , sharedPreferences.getString("rsiMore", ""))
-                    intent.putExtra("sellSlowK" , sharedPreferences.getString("sellSlowK", ""))
-                    intent.putExtra("sellSlowD" , sharedPreferences.getString("sellSlowD", ""))
-                    intent.putExtra("priceMore" , sharedPreferences.getString("priceMore", ""))
-                    intent.putExtra("volume" , sharedPreferences.getString("volume", ""))
-                    requireActivity().startService(intent)
 
                 }
                 else {
+                    val intent = Intent(requireContext(), AutoTradingService::class.java)
                     requireActivity().stopService(intent)
                     setTextEditEnabled(true)
                 }
+            }
+            marketItems.onItemSelectedListener = object : OnItemSelectedListener {
+                override fun onItemSelected(
+                    parentView: AdapterView<*>?,
+                    selectedItemView: View,
+                    position: Int,
+                    id: Long
+                ) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        setTradingIndicator()
+                    }
+                }
+                override fun onNothingSelected(parentView: AdapterView<*>?) {}
+            }
+            unitItems.onItemSelectedListener = object : OnItemSelectedListener {
+                override fun onItemSelected(
+                    parentView: AdapterView<*>?,
+                    selectedItemView: View,
+                    position: Int,
+                    id: Long
+                ) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        setTradingIndicator()
+                    }
+                }
+                override fun onNothingSelected(parentView: AdapterView<*>?) {}
             }
         }
 
@@ -83,7 +99,7 @@ class AutoTradingFragment: Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             with(binding){
                 val rest = RetrofitOkHttpManagerUpbit(generateJWT()).restService
-                val responseStr = responseUpbitAPI(rest.requestMarketAll())
+                val responseStr = responseSyncUpbitAPI(rest.requestMarketAll())
                 val kwrArray = ArrayList<String>()
                 getGsonList(responseStr, MarketAll::class.java)
                     .filter { marketAll -> marketAll.market.contains("KRW") }//마켓 목록중 원화만 취급
@@ -109,50 +125,58 @@ class AutoTradingFragment: Fragment() {
                     unitItems.adapter = adapter2
                     unitItems.setSelection(unitPosition)
                 }
-                val marketItem = marketItems.selectedItem.toString()
-                val unitItem = unitItems.selectedItem.toString()
-                if(marketItem.isNotEmpty()
-                    && unitItem.isNotEmpty()){
+                setTradingIndicator()
+            }
+        }
+    }
 
-                    val candles = getCandles(marketItem, unitItem)
-                    val stochasticList = stochasticFastSlow(candles)
-                    val rsi = calculateRSI(candles)
+    @RequiresApi(Build.VERSION_CODES.N)
+    private suspend fun setTradingIndicator(){
+        with(binding){
+            val marketItem = marketItems.selectedItem.toString()
+            val unitItem = unitItems.selectedItem.toString()
+            if(marketItem.isNotEmpty()
+                && unitItem.isNotEmpty()){
 
-                    val rest3 = RetrofitOkHttpManagerUpbit(generateJWT()).restService
-                    val responseStr3 = responseUpbitAPI(rest3.requestAccounts())
-                    val accounts = getGsonList(responseStr3, Accounts::class.java)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        /*
-                        보여줄떄는 주석
-                        priceTV.setText(decimalFormat(candles[0].trade_price, 0))
-                        rsiTV.setText(decimalFormat(calculateRSI(candles), 2))
-                        stochasticSlowKTV.setText(decimalFormat(stochasticList[0]))
-                        stochasticSlowDTV.setText(decimalFormat(stochasticList[1]))
+                val candles = getCandles(marketItem, unitItem)
+                val stochasticList = stochasticFastSlow(candles)
+                val rsi = calculateRSI(candles)
 
-                        accounts.forEach {
-                            when (it.currency) {
-                                "KRW" -> {
-                                    myAssetTV.setText(decimalFormat(it.balance.toFloat()))
-                                    myLockedTV.setText(decimalFormat(it.locked.toFloat()))
-                                }
-                                marketItem.split("-")[1] ->
-                                    quantityTV.setText(decimalFormat(it.balance.toFloat(), false))
+                val rest = RetrofitOkHttpManagerUpbit(generateJWT()).restService
+                val responseStr = responseSyncUpbitAPI(rest.requestAccounts())
+                val accounts = getGsonList(responseStr, Accounts::class.java)
+                CoroutineScope(Dispatchers.Main).launch {
+                    //보여줄떄는 주석
+                    priceTV.setText(decimalFormat(candles[0].trade_price, 0))
+                    rsiTV.setText(decimalFormat(rsi, 2))
+                    stochasticSlowKTV.setText(decimalFormat(stochasticList[0]))
+                    stochasticSlowDTV.setText(decimalFormat(stochasticList[1]))
+
+                    accounts.forEach {
+                        when (it.currency) {
+                            "KRW" -> {
+                                myAssetTV.setText(decimalFormat(it.balance.toFloat()))
+                                myLockedTV.setText(decimalFormat(it.locked.toFloat()))
                             }
-                        }*/
-                        priceTV.setText("123,456")
-                        rsiTV.setText(decimalFormat(rsi, 2))
-                        stochasticSlowKTV.setText(decimalFormat(stochasticList[0]))
-                        stochasticSlowDTV.setText(decimalFormat(stochasticList[1]))
+                            marketItem.split("-")[1] ->
+                                volumeTV.setText(decimalFormat(it.balance.toFloat(), false))
+                        }
+                    }
+                    /*priceTV.setText("123,456")
+                    rsiTV.setText(decimalFormat(rsi, 2))
+                    stochasticSlowKTV.setText(decimalFormat(stochasticList[0]))
+                    stochasticSlowDTV.setText(decimalFormat(stochasticList[1]))*/
 
-                        accounts.forEach {
-                            when (it.currency) {
-                                "KRW" -> {
-                                    myAssetTV.setText("1,000.0")
-                                    myLockedTV.setText("10,000")
-                                }
-                                marketItem.split("-")[1] ->
-                                    volumeTV.setText(decimalFormat(it.balance.toFloat(), false))
+                    accounts.forEach {
+                        when (it.currency) {
+                            "KRW" -> {
+                                /*myAssetTV.setText("1,000.0")
+                                myLockedTV.setText("10,000")*/
+                                myAssetTV.setText(decimalFormat(it.balance.toFloat(), 0))
+                                myAssetTV.setText(decimalFormat(it.locked.toFloat(), 0))
                             }
+                            marketItem.split("-")[1] ->
+                                volumeTV.setText(decimalFormat(it.balance.toFloat(), false))
                         }
                     }
                 }
@@ -160,22 +184,51 @@ class AutoTradingFragment: Fragment() {
         }
     }
 
- /*   override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean("isChecked", binding.autoTradingSwitching.isChecked)
-        outState.putBundle("autoTrading", arguments)
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        savedInstanceState?.let { switchChecked = it.getBoolean("isChecked") }
-    }*/
-
     private fun setTextEditEnabled(enabled: Boolean){
         with(binding){
             marketItems.isEnabled = enabled
             unitItems.isEnabled = enabled
         }
+    }
+
+    private fun checkCondition(): Boolean{
+        val sharedPreferences = SharedPreferenceManager.getAutoTradingPreference(requireContext())
+
+        val buyPrice = sharedPreferences.getString("buyPrice", "") ?: ""
+        val volume = sharedPreferences.getString("volume", "") ?: ""
+        val conditionCheck = (buyPrice.isNotEmpty() && buyPrice.toFloat() < 5000F)
+                || (volume.isNotEmpty() && volume.toFloat() > 0F)
+                || (buyPrice.isEmpty() && volume.isEmpty())
+        if(conditionCheck){
+            return false
+        }
+        return true
+    }
+
+
+    private fun setPreferenceToIntent(): Intent {
+        val sharedPreferences = SharedPreferenceManager.getAutoTradingPreference(requireContext())
+        val intent = Intent(requireContext(), AutoTradingService::class.java)
+        with(binding){
+            intent.putExtra("autoTrading", true)
+            intent.putExtra("market", marketItems.selectedItem.toString())
+            intent.putExtra("unit", unitItems.selectedItem.toString())
+            sharedPreferences.edit().putString("market", marketItems.selectedItem.toString()).apply()
+            sharedPreferences.edit().putString("unit", unitItems.selectedItem.toString()).apply()
+
+            intent.putExtra("rsiLess" , sharedPreferences.getString("rsiLess", "") ?: "")
+            intent.putExtra("buySlowK" , sharedPreferences.getString("buySlowK", "") ?: "")
+            intent.putExtra("buySlowD" , sharedPreferences.getString("buySlowD", "") ?: "")
+            intent.putExtra("priceLess" , sharedPreferences.getString("priceLess", "") ?: "")
+            intent.putExtra("buyPrice" , sharedPreferences.getString("buyPrice", "") ?: "")
+
+            intent.putExtra("rsiMore" , sharedPreferences.getString("rsiMore", "") ?: "")
+            intent.putExtra("sellSlowK" , sharedPreferences.getString("sellSlowK", "") ?: "")
+            intent.putExtra("sellSlowD" , sharedPreferences.getString("sellSlowD", "") ?: "")
+            intent.putExtra("priceMore" , sharedPreferences.getString("priceMore", "") ?: "")
+            intent.putExtra("volume" , sharedPreferences.getString("volume", "") ?: "")
+        }
+        return intent
     }
 
     companion object{

@@ -1,5 +1,6 @@
 package com.im.app.coinwatcher
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -22,7 +23,6 @@ import kotlin.system.exitProcess
  * common에 preference 추가 singleton으로
  */
 class MainActivity : AppCompatActivity() {
-    //private lateinit var drawerLayout: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(IS_NIGHT)

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.im.app.coinwatcher.common.SharedPreferenceManager
-import com.im.app.coinwatcher.common.switchListener
 import com.im.app.coinwatcher.databinding.FragmentAutoSellingBinding
 import kotlinx.android.synthetic.main.fragment_auto_selling.*
 

@@ -30,7 +30,7 @@ class FundingHistoryFragment: Fragment() {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val instance = when(tab.position){
                     0 -> MyAssetsFragment.newInstance()
-                    1 -> TransactionHistoryFragment.newInstance()
+                    1 -> TradeHistoryFragment.newInstance()
                     else -> throw IllegalStateException("Unexpected value: ${tab.position}")
                 }
 

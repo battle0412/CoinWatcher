@@ -20,7 +20,7 @@ import java.text.DecimalFormat
 import kotlin.math.abs
 
 fun toastMessage(message: String){
-    Toast.makeText(CoinWatcherApplication.getAppInstance(), message, Toast.LENGTH_LONG).show()
+    Toast.makeText(CoinWatcherApplication.getAppInstance(), message, Toast.LENGTH_SHORT).show()
 }
 
 /**
@@ -63,9 +63,9 @@ fun <T> getGsonData(jsonArrayStr: String, classType: Class<T>): T {
 
 /**
  * 업비트 응답 함수
- * TO-DO 에러 응답 처리 추가해야함
+ * 
  */
-suspend fun responseUpbitAPI(call: Call<ResponseBody>): String {
+/*suspend fun responseSyncUpbitAPI(call: Call<ResponseBody>): String {
     val resultStr =
         withContext(Dispatchers.IO) {
             val response = call.await()
@@ -74,10 +74,10 @@ suspend fun responseUpbitAPI(call: Call<ResponseBody>): String {
             }
         }
     return resultStr
-}
+}*/
 
 class UpbitAPIService(private val call: Call<ResponseBody>) {
-    fun responseUpbitAPI(): String {
+    fun responseSyncUpbitAPI(): String {
         var resultStr = ""
         call.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -98,6 +98,8 @@ class UpbitAPIService(private val call: Call<ResponseBody>) {
         return resultStr
     }
 }
+
+
 
 /**
  * 업비트 market 소수점 자리수 표시방법
@@ -393,17 +395,25 @@ suspend fun getCandles(marketItem: String, unitItem: String): MutableList<Candle
         val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
 
         val responseStr = if (unitItem == "일" || unitItem == "주" || unitItem == "월")
-            responseUpbitAPI(rest.requestCandles(unitMapping(unitItem), marketItem, 200))
+            responseSyncUpbitAPI(rest.requestCandles(unitMapping(unitItem), marketItem, 200))
         else
-            responseUpbitAPI(
+            responseSyncUpbitAPI(
                 rest.requestMinuteCandles(
                     unitMapping(unitItem).toInt(),
                     marketItem,
                     200
                 )
             )
-        return  if (unitItem == "일" || unitItem == "주" || unitItem == "월")
-            getGsonList(responseStr, Candles::class.java)
+        return getGsonList(responseStr, Candles::class.java)
+}
+
+suspend fun responseSyncUpbitAPI(call: Call<ResponseBody>): String {
+    val resultStr = withContext(Dispatchers.IO){
+        val response = call.execute()
+        if(response.isSuccessful)
+            response.body()!!.string()
         else
-            getGsonList(responseStr, Candles::class.java)
+            response.errorBody()!!.string()
+    }
+    return resultStr
 }

@@ -36,7 +36,7 @@ class RetrofitOkHttpManagerUpbit(private val JWT_Token: String) {
         retrofitBuiler.client(okHttpClient)
     }
 
-    /*private class RetryInterceptor: Interceptor {
+    private class RetryInterceptor: Interceptor {
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain): Response {
             val request: Request = chain.request()
@@ -52,7 +52,7 @@ class RetrofitOkHttpManagerUpbit(private val JWT_Token: String) {
             }
             return response
         }
-    }*/
+    }
     private fun httpInterceptor(): HttpLoggingInterceptor {
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY

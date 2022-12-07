@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.im.app.coinwatcher.JWT.GeneratorJWT
 import com.im.app.coinwatcher.common.SoundSearcher
 import com.im.app.coinwatcher.common.getGsonList
-import com.im.app.coinwatcher.common.responseUpbitAPI
+import com.im.app.coinwatcher.common.responseSyncUpbitAPI
 import com.im.app.coinwatcher.databinding.FragmentCoinListBinding
 import com.im.app.coinwatcher.json_data.MarketAll
 import com.im.app.coinwatcher.json_data.MarketTicker
@@ -85,7 +85,7 @@ class CoinListFragment: Fragment() {
             separator = ","
         )
         val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
-        val responseBody = responseUpbitAPI(rest.requestMarketsTicker(kwrMarketStr))
+        val responseBody = responseSyncUpbitAPI(rest.requestMarketsTicker(kwrMarketStr))
         marketList = getGsonList(responseBody, MarketTicker::class.java)
             .sortedByDescending { MarketTicker -> MarketTicker.acc_trade_price_24h } as MutableList<MarketTicker>
         recyclerViewUpdate()
@@ -94,7 +94,7 @@ class CoinListFragment: Fragment() {
     @RequiresApi(Build.VERSION_CODES.N)
     private suspend fun initMarketList(){
         val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
-        val responseStr = responseUpbitAPI(rest.requestMarketAll())
+        val responseStr = responseSyncUpbitAPI(rest.requestMarketAll())
         getGsonList(responseStr, MarketAll::class.java)
             .filter { marketAll -> marketAll.market.contains("KRW") }//마켓 목록중 원화만 취급
             .forEach{
@@ -116,7 +116,7 @@ class CoinListFragment: Fragment() {
                     val deco = MarketItemDecoration(requireContext(), 5, 8, 5, 8)
                     addItemDecoration(deco)
                     layoutManager = manager
-                    adapter = CoinListFragmentAdapter(marketList, kwrMap)
+                    adapter = CoinListFragmentAdapter(marketList, kwrMap, this@CoinListFragment)
                 }
                 else{
                     val recyclerViewState = layoutManager!!.onSaveInstanceState()
@@ -125,9 +125,9 @@ class CoinListFragment: Fragment() {
                             SoundSearcher.matchString(marketMapping(it.market), binding.searchCoin.text.toString())
                         }.toMutableList()
 
-                        CoinListFragmentAdapter(tmpList, kwrMap)
+                        CoinListFragmentAdapter(tmpList, kwrMap, this@CoinListFragment)
                     } else
-                        CoinListFragmentAdapter(marketList, kwrMap)
+                        CoinListFragmentAdapter(marketList, kwrMap, this@CoinListFragment)
 
 
                     layoutManager!!.onRestoreInstanceState(recyclerViewState)
