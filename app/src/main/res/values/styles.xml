@@ -50,4 +50,39 @@
         <item name="android:background">@color/colorPrimary</item>
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
+    <!--자동매매 입력버튼-->
+    <style name="autoTradingEditTextLeft" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/left_empty_rect</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textCursorDrawable">?android:attr/textColorPrimary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+    <style name="autoTradingEditTextRight" parent="Widget.AppCompat.TextView">
+        <item name="android:background">@drawable/right_empty_rect</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textCursorDrawable">?android:attr/textColorPrimary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+    <!--바텀시트 라운드 코너-->
+    <style name="bottomSheet" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+    </style>
+
+    <style name="AppBottomSheetDialogTheme"
+        parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/rounded_rect</item>
+    </style>
 </resources>

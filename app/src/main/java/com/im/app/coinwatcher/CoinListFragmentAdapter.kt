@@ -48,12 +48,12 @@ class CoinListFragmentAdapter(private var marketList: MutableList<MarketTicker>
                 //EVEN : 보합 RISE : 상승 FALL : 하락	String
                 when(this.change){
                     "RISE" -> {
-                        tradePrice.setTextColor(Color.parseColor("#E16553"))
-                        changeRate.setTextColor(Color.parseColor("#E16553"))
+                        tradePrice.setTextColor(Color.parseColor("#C84A31"))
+                        changeRate.setTextColor(Color.parseColor("#C84A31"))
                     }
                     "FALL" -> {
-                        tradePrice.setTextColor(Color.parseColor("#288CFF"))
-                        changeRate.setTextColor(Color.parseColor("#288CFF"))
+                        tradePrice.setTextColor(Color.parseColor("#1261C6"))
+                        changeRate.setTextColor(Color.parseColor("#1261C6"))
                     }
                     else -> {}
                 }

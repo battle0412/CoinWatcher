@@ -16,7 +16,6 @@
         android:weightSum="10"
         android:gravity="center"
         android:paddingTop="5dp"
-        android:background="@color/windowBackground"
         android:orientation="horizontal">
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"

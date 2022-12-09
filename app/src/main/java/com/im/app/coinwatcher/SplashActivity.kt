@@ -24,44 +24,43 @@ class SplashActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        /*val test = SharedPreferenceManager.getSettingsPreference(this).edit()
-        test.remove("ACCESS_KEY")
-        test.remove("SECRET_KEY")
-        test.apply()*/
+
+        val sharedPreferences = SharedPreferenceManager.getSettingsPreference(this@SplashActivity)
+        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+                result: ActivityResult ->
+            if(result.resultCode == RESULT_OK){
+                IS_NIGHT = sharedPreferences.getBoolean("IS_NIGHT", false)
+                IS_RECEIVE_ALARM = sharedPreferences.getBoolean("IS_RECEIVE_ALARM", true)
+                ACCESS_KEY = sharedPreferences.getString("ACCESS_KEY", "").toString()
+                SECRET_KEY = sharedPreferences.getString("SECRET_KEY", "").toString()
+                val mainIntent = Intent(this@SplashActivity, MainActivity::class.java)
+                startActivity(mainIntent)
+                finish()
+            } else {
+                finish()
+            }
+        }
 
         //없으면 DB인스턴스 생성 후 테이블 생성
         CoroutineScope(Dispatchers.IO).launch {
+            delay(2000L)
+
             if(Arrays.binarySearch(databaseList(), DATABASE_NAME) < 0){
                 openOrCreateDatabase(DATABASE_NAME, Context.MODE_PRIVATE, null).also {
                     it.setLocale(Locale.getDefault())
                     SQLiteManager.getDBInstance(this@SplashActivity).onCreate(it)
                 }
             }
-        }
-        with(SharedPreferenceManager.getSettingsPreference(this)){
-            if(this.getString("ACCESS_KEY", "") == ""
-                || this.getString("SECRET_KEY", "") == ""){
-                 val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-                    result: ActivityResult ->
-                    if(result.resultCode == RESULT_OK){
-                        IS_NIGHT = this.getBoolean("IS_NIGHT", false)
-                        IS_RECEIVE_ALARM = this.getBoolean("IS_RECEIVE_ALARM", true)
-                        ACCESS_KEY = this.getString("ACCESS_KEY", "").toString()
-                        SECRET_KEY = this.getString("SECRET_KEY", "").toString()
-                        val mainIntent = Intent(this@SplashActivity, MainActivity::class.java)
-                        startActivity(mainIntent)
-                        finish()
-                    } else {
-                        finish()
-                    }
-                }
+
+            if(sharedPreferences.getString("ACCESS_KEY", "") == ""
+                || sharedPreferences.getString("SECRET_KEY", "") == ""){
                 val keySettingIntent = Intent(this@SplashActivity, KeySettingActivity::class.java)
                 startForResult.launch(keySettingIntent)
             } else {
-                IS_NIGHT = this.getBoolean("IS_NIGHT", false)
-                IS_RECEIVE_ALARM = this.getBoolean("IS_RECEIVE_ALARM", true)
-                ACCESS_KEY = this.getString("ACCESS_KEY", "").toString()
-                SECRET_KEY = this.getString("SECRET_KEY", "").toString()
+                IS_NIGHT = sharedPreferences.getBoolean("IS_NIGHT", false)
+                IS_RECEIVE_ALARM = sharedPreferences.getBoolean("IS_RECEIVE_ALARM", true)
+                ACCESS_KEY = sharedPreferences.getString("ACCESS_KEY", "").toString()
+                SECRET_KEY = sharedPreferences.getString("SECRET_KEY", "").toString()
 
                 val mainIntent = Intent(this@SplashActivity, MainActivity::class.java)
                 startActivity(mainIntent)

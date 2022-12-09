@@ -15,7 +15,14 @@
     <color name="switchTrackDark">#B3434343</color>
     <color name="subTitle">#99434343</color>
     <color name="itemTextColor">#FFFFFFFF</color>
-    <color name="dialogBackground">#4DBBBBBB</color>
+
+    <!--팝업 배경색-->
+    <color name="dialogBackground">#CCBBBBBB</color>
+
+    <!--탭 매수 매도 색상-->
+    <color name="buyTextColor">#FFC84A31</color>
+    <color name="sellTextColor">#FF1261C6</color>
+
     <!--day-->
     <color name="colorPrimary">#FF283593</color>
     <color name="colorPrimaryDark">#FF283593</color>
@@ -23,13 +30,16 @@
     <color name="windowBackground">#FFFFFFFF</color>
     <color name="navigationBarColor">#FF212121</color>
     <color name="colorAccent">#FF283593</color>
+    <color name="textInputOutlinedStyle">#A6DDDDDD</color>
+
     <!--night-->
-    <color name="nightColorPrimary">#FF283593</color>
-    <color name="nightColorPrimaryDark">#FF283593</color>
-    <color name="nightTextColorPrimary">#FFFFFFFF</color>
-    <color name="nightWindowBackground">#FF212121</color>
+    <color name="nightColorPrimary">#FF061222</color>
+    <color name="nightColorPrimaryDark">#FF061222</color>
+    <color name="nightTextColorPrimary">#FFD3D4D6</color>
+    <color name="nightWindowBackground">#D9061222</color>
     <color name="nightNavigationBarColor">#FF212121</color>
-    <color name="nightColorAccent">#FFFFFFFF</color>
+    <color name="nightColorAccent">#FFD3D4D6</color>
+    <color name="nightTextInputOutlinedStyle">#FF152131</color>
 </resources>
 <!--
 투명도     색상

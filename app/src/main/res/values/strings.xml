@@ -44,6 +44,8 @@
     <string name="stochasticSlowD">스토캐스틱S D</string>
     <string name="stochasticSlowKFullName">StochasticSlow K</string>
     <string name="stochasticSlowDFullName">StochasticSlow D</string>
+    <string name="stochasticSlowKShortName">Slow K</string>
+    <string name="stochasticSlowDShortName">Slow D</string>
     <string name="price">가격</string>
     <string name="remain">내 가용자산</string>
     <string name="more">이상</string>

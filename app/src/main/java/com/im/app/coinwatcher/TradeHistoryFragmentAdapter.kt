@@ -33,11 +33,11 @@ class TradeHistoryFragmentAdapter(private var tradeList: MutableList<TradeOrder>
                 tradesMarket.text = market.split("-")[1]
                 tradesSide.text = when(side){
                     "bid" -> {
-                        tradesSide.setTextColor(Color.parseColor("#E16553"))
+                        tradesSide.setTextColor(Color.parseColor("#C84A31"))
                         "매수"
                     }
                     "ask" -> {
-                        tradesSide.setTextColor(Color.parseColor("#288CFF"))
+                        tradesSide.setTextColor(Color.parseColor("#1261C6"))
                         "매도"
                     }
                     else -> ""

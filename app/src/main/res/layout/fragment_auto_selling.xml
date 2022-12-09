@@ -16,23 +16,21 @@
             android:gravity="center"
             android:layout_marginBottom="10dp"
             android:orientation="horizontal">
-            <com.google.android.material.textview.MaterialTextView
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_marginStart="10dp"
                 android:layout_weight="6"
-                style="@style/UpbitTextTheme"
+                style="@style/autoTradingEditTextRight"
                 android:text="@string/rsi"/>
-            <com.google.android.material.textfield.TextInputEditText
+            <EditText
                 android:id="@+id/rsiMore"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textCursorDrawable="?attr/colorAccent"
                 android:layout_weight="4"
                 android:hint="@string/more"
                 android:textAlignment="textEnd"
                 android:inputType="numberDecimal"
+                style="@style/autoTradingEditTextLeft"
                 android:maxLines="1" />
         </LinearLayout>
         <LinearLayout
@@ -42,23 +40,21 @@
             android:gravity="center"
             android:layout_marginBottom="10dp"
             android:orientation="horizontal">
-            <com.google.android.material.textview.MaterialTextView
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_marginStart="10dp"
                 android:layout_weight="6"
-                style="@style/UpbitTextTheme"
-                android:text="@string/stochasticSlowKFullName"/>
-            <com.google.android.material.textfield.TextInputEditText
+                style="@style/autoTradingEditTextRight"
+                android:text="@string/stochasticSlowKShortName"/>
+            <EditText
                 android:id="@+id/stochasticSlowKMore"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textCursorDrawable="?attr/colorAccent"
                 android:layout_weight="4"
                 android:hint="@string/more"
                 android:textAlignment="textEnd"
                 android:inputType="numberDecimal"
+                style="@style/autoTradingEditTextLeft"
                 android:maxLines="1" />
         </LinearLayout>
         <LinearLayout
@@ -68,23 +64,21 @@
             android:gravity="center"
             android:layout_marginBottom="10dp"
             android:orientation="horizontal">
-            <com.google.android.material.textview.MaterialTextView
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_marginStart="10dp"
                 android:layout_weight="6"
-                style="@style/UpbitTextTheme"
-                android:text="@string/stochasticSlowDFullName"/>
-            <com.google.android.material.textfield.TextInputEditText
+                style="@style/autoTradingEditTextRight"
+                android:text="@string/stochasticSlowDShortName"/>
+            <EditText
                 android:id="@+id/stochasticSlowDMore"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textCursorDrawable="?attr/colorAccent"
                 android:layout_weight="4"
                 android:hint="@string/more"
                 android:textAlignment="textEnd"
                 android:inputType="numberDecimal"
+                style="@style/autoTradingEditTextLeft"
                 android:maxLines="1" />
         </LinearLayout>
         <LinearLayout
@@ -94,24 +88,22 @@
             android:gravity="center"
             android:layout_marginBottom="10dp"
             android:orientation="horizontal">
-            <com.google.android.material.textview.MaterialTextView
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_marginStart="10dp"
                 android:layout_weight="4"
-                style="@style/UpbitTextTheme"
+                style="@style/autoTradingEditTextRight"
                 android:text="@string/price"/>
-            <com.google.android.material.textfield.TextInputEditText
+            <EditText
                 android:id="@+id/priceMore"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textCursorDrawable="?attr/colorAccent"
                 android:layout_weight="6"
                 android:hint="@string/more"
                 android:textAlignment="textEnd"
                 android:inputType="numberDecimal"
                 android:maxLength="10"
+                style="@style/autoTradingEditTextLeft"
                 android:maxLines="1" />
         </LinearLayout>
         <LinearLayout
@@ -121,23 +113,21 @@
             android:gravity="center"
             android:layout_marginBottom="10dp"
             android:orientation="horizontal">
-            <com.google.android.material.textview.MaterialTextView
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_marginStart="10dp"
                 android:layout_weight="4"
-                style="@style/UpbitTextTheme"
+                style="@style/autoTradingEditTextRight"
                 android:text="@string/volume"/>
-            <com.google.android.material.textfield.TextInputEditText
+            <EditText
                 android:id="@+id/volume"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textCursorDrawable="?attr/colorAccent"
                 android:layout_weight="6"
                 android:inputType="numberDecimal"
                 android:maxLength="10"
                 android:textAlignment="textEnd"
+                style="@style/autoTradingEditTextLeft"
                 android:maxLines="1" />
         </LinearLayout>
     </LinearLayout>

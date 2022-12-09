@@ -9,5 +9,7 @@
         <item name="colorSecondary">@color/white</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorSurface">@color/switchTrack</item>
+        <item name="textInputOutlinedStyle">@color/textInputOutlinedStyle</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
 </resources>

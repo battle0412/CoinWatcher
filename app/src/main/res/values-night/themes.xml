@@ -9,5 +9,7 @@
         <item name="colorSecondary">@color/nightColorPrimary</item>
         <item name="colorAccent">@color/nightColorAccent</item>
         <item name="colorSurface">@color/switchTrackDark</item>
+        <item name="textInputOutlinedStyle">@color/nightTextInputOutlinedStyle</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
 </resources>
