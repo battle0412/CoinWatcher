@@ -7,18 +7,61 @@
     android:orientation="vertical"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     android:layout_gravity="bottom">
+    <LinearLayout
+        android:id="@+id/chartHeader"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintTop_toTopOf="parent"
+        android:weightSum="10"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:background="@color/windowBackground"
+        android:orientation="horizontal">
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/marketName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="20sp"
+                android:textColor="@color/textColorPrimary"
+                android:gravity="center_vertical" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:hintEnabled="false"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_weight="3">
+            <AutoCompleteTextView
+                android:id="@+id/unitItems"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="0dp"
+                android:textSize="15sp"
+                android:textColor="@color/textColorPrimary"
+                android:popupBackground="@color/dialogBackground"
+                android:dropDownHeight="200dp"
+                android:inputType="text"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
     <com.github.mikephil.charting.charts.CandleStickChart
+        android:padding="5dp"
         android:id="@+id/candleStickChart"
         android:layout_width="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHeight_percent="0.7"
+        app:layout_constraintTop_toBottomOf="@+id/chartHeader"
+        app:layout_constraintHeight_percent="0.65"
+        android:background="@color/windowBackground"
         android:layout_height="0dp"/>
     <com.github.mikephil.charting.charts.BarChart
+        android:padding="5dp"
         android:id="@+id/barChart"
         app:layout_constraintTop_toBottomOf="@+id/candleStickChart"
-        app:layout_constraintHeight_percent="0.3"
+        app:layout_constraintHeight_percent="0.25"
         android:layout_width="match_parent"
+        android:background="@color/windowBackground"
         android:layout_height="0dp"/>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

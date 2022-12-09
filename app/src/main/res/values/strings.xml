@@ -62,4 +62,5 @@
     <string name="shadowL">저가</string>
     <string name="close">종가</string>
     <string name="volumeTotal">거래량</string>
+
 </resources>

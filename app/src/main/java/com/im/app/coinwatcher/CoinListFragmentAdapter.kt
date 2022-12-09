@@ -39,7 +39,8 @@ class CoinListFragmentAdapter(private var marketList: MutableList<MarketTicker>
     override fun onBindViewHolder(holder: CoinListViewHolder, position: Int) {
         with(holder.binding){
             with(marketList[position]){
-                coinNameKor.text = marketMapping(market)
+                val marketKor = marketMapping(market)
+                coinNameKor.text = marketKor
                 tradePrice.text = decimalFormat(trade_price)
                 changeRate.text = (decimalFormat(change_rate  * 100, true)) + "%"
                 accTradePrice24h.text = """${decimalFormat(acc_trade_price_24h / 1000000)}백만"""
@@ -56,11 +57,12 @@ class CoinListFragmentAdapter(private var marketList: MutableList<MarketTicker>
                     }
                     else -> {}
                 }
+                root.setOnClickListener {
+                    val bottomSheet = BottomSheetFragment.newInstance(marketList[position].market, marketKor)
+                    bottomSheet.show(owner.childFragmentManager, bottomSheet.tag)
+                }
             }
-            root.setOnClickListener {
-                val bottomSheet = BottomSheetFragment.newInstance(marketList[position].market)
-                bottomSheet.show(owner.childFragmentManager, bottomSheet.tag)
-            }
+
         }
     }
     override fun getItemCount() = marketList.size

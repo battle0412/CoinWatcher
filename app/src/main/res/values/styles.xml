@@ -44,4 +44,10 @@
         <item name="android:textColor">@color/subTitle</item>
         <item name="android:textStyle">bold</item>
     </style>
+    <!--차트 버튼-->
+    <style name="unitButtons" parent="Widget.AppCompat.ActionButton">
+        <item name="android:textSize">8sp</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
 </resources>

@@ -40,7 +40,7 @@ class AutoTradingFragment: Fragment() {
         with(binding){
             autoTradingSwitching.isChecked = arguments?.getBoolean("autoTrading") ?: false
             setTextEditEnabled(!autoTradingSwitching.isChecked)
-
+            val sharedPreferences = SharedPreferenceManager.getAutoTradingPreference(requireContext())
             autoTradingSwitching.setOnCheckedChangeListener { _, isChecked ->
                 if(isChecked){
                     if(!checkCondition()) {
@@ -53,8 +53,6 @@ class AutoTradingFragment: Fragment() {
 
                         requireActivity().startService(setPreferenceToIntent())
                     }
-
-
                 }
                 else {
                     val intent = Intent(requireContext(), AutoTradingService::class.java)
@@ -62,31 +60,20 @@ class AutoTradingFragment: Fragment() {
                     setTextEditEnabled(true)
                 }
             }
-            marketItems.onItemSelectedListener = object : OnItemSelectedListener {
-                override fun onItemSelected(
-                    parentView: AdapterView<*>?,
-                    selectedItemView: View,
-                    position: Int,
-                    id: Long
-                ) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        setTradingIndicator()
-                    }
+
+            marketItems.setOnItemClickListener { _, _, _, _ ->
+                val unitText = marketItems.text.toString()
+                sharedPreferences.edit().putString("market",unitText ).apply()
+                CoroutineScope(Dispatchers.IO).launch {
+                    setTradingIndicator()
                 }
-                override fun onNothingSelected(parentView: AdapterView<*>?) {}
             }
-            unitItems.onItemSelectedListener = object : OnItemSelectedListener {
-                override fun onItemSelected(
-                    parentView: AdapterView<*>?,
-                    selectedItemView: View,
-                    position: Int,
-                    id: Long
-                ) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        setTradingIndicator()
-                    }
+            unitItems.setOnItemClickListener { _, _, _, _ ->
+                val unitText = unitItems.text.toString()
+                sharedPreferences.edit().putString("unit",unitText ).apply()
+                CoroutineScope(Dispatchers.IO).launch {
+                    setTradingIndicator()
                 }
-                override fun onNothingSelected(parentView: AdapterView<*>?) {}
             }
         }
 
@@ -117,13 +104,11 @@ class AutoTradingFragment: Fragment() {
                     getUnits()
                 )
                 val sharedPreferences = SharedPreferenceManager.getAutoTradingPreference(requireContext())
-                val marketPosition = adapter.getPosition(sharedPreferences.getString("market", "KRW-BTC"))
-                val unitPosition = adapter2.getPosition(sharedPreferences.getString("unit", "1분"))
                 withContext(Dispatchers.Main){
-                    marketItems.adapter = adapter
-                    marketItems.setSelection(marketPosition)
-                    unitItems.adapter = adapter2
-                    unitItems.setSelection(unitPosition)
+                    marketItems.setText(sharedPreferences.getString("market", "KRW-BTC"))
+                    unitItems.setText(sharedPreferences.getString("unit", "1분"))
+                    marketItems.setAdapter(adapter)
+                    unitItems.setAdapter(adapter2)
                 }
                 setTradingIndicator()
             }
@@ -133,8 +118,8 @@ class AutoTradingFragment: Fragment() {
     @RequiresApi(Build.VERSION_CODES.N)
     private suspend fun setTradingIndicator(){
         with(binding){
-            val marketItem = marketItems.selectedItem.toString()
-            val unitItem = unitItems.selectedItem.toString()
+            val marketItem = marketItems.text.toString()
+            val unitItem = unitItems.text.toString()
             if(marketItem.isNotEmpty()
                 && unitItem.isNotEmpty()){
 
@@ -211,10 +196,10 @@ class AutoTradingFragment: Fragment() {
         val intent = Intent(requireContext(), AutoTradingService::class.java)
         with(binding){
             intent.putExtra("autoTrading", true)
-            intent.putExtra("market", marketItems.selectedItem.toString())
-            intent.putExtra("unit", unitItems.selectedItem.toString())
-            sharedPreferences.edit().putString("market", marketItems.selectedItem.toString()).apply()
-            sharedPreferences.edit().putString("unit", unitItems.selectedItem.toString()).apply()
+            intent.putExtra("market", marketItems.text.toString())
+            intent.putExtra("unit", unitItems.text.toString())
+            sharedPreferences.edit().putString("market", marketItems.text.toString()).apply()
+            sharedPreferences.edit().putString("unit", unitItems.text.toString()).apply()
 
             intent.putExtra("rsiLess" , sharedPreferences.getString("rsiLess", "") ?: "")
             intent.putExtra("buySlowK" , sharedPreferences.getString("buySlowK", "") ?: "")
