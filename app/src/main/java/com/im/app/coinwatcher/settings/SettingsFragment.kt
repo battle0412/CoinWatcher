@@ -32,14 +32,25 @@ class SettingsFragment: Fragment() {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
             accessKeySave.setOnClickListener {
-                sharedPreferences.edit().putString("ACCESS_KEY", accesskeyED.text.toString()).apply()
-                ACCESS_KEY = accesskeyED.text.toString()
-                toastMessage("저장 성공")
+                if(accesskeyED.text.toString().trim().isEmpty())
+                    toastMessage("ACCESS_KEY를 입력하세요")
+                else{
+                    sharedPreferences.edit().putString("ACCESS_KEY", accesskeyED.text.toString())
+                        .apply()
+                    ACCESS_KEY = accesskeyED.text.toString()
+                    toastMessage("저장 성공")
+                }
+
             }
             secretKeySave.setOnClickListener {
-                sharedPreferences.edit().putString("SECRET_KEY", secretkeyED.text.toString()).apply()
-                SECRET_KEY = secretkeyED.text.toString()
-                toastMessage("저장 성공")
+                if(accesskeyED.text.toString().trim().isEmpty())
+                    toastMessage("SECRET_KEY를 입력하세요")
+                else {
+                    sharedPreferences.edit().putString("SECRET_KEY", secretkeyED.text.toString())
+                        .apply()
+                    SECRET_KEY = secretkeyED.text.toString()
+                    toastMessage("저장 성공")
+                }
             }
         }
         return binding.root
