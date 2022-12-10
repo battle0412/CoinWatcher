@@ -43,7 +43,7 @@ class SettingsFragment: Fragment() {
 
             }
             secretKeySave.setOnClickListener {
-                if(accesskeyED.text.toString().trim().isEmpty())
+                if(secretkeyED.text.toString().trim().isEmpty())
                     toastMessage("SECRET_KEY를 입력하세요")
                 else {
                     sharedPreferences.edit().putString("SECRET_KEY", secretkeyED.text.toString())
