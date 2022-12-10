@@ -1,20 +1,14 @@
 package com.im.app.coinwatcher
 
-import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationView
+import com.im.app.coinwatcher.auto_trading.AutoTradingFragment
 import com.im.app.coinwatcher.common.IS_NIGHT
-import com.im.app.coinwatcher.common.SharedPreferenceManager
-import kotlin.system.exitProcess
+import com.im.app.coinwatcher.history.FundingHistoryFragment
+import com.im.app.coinwatcher.settings.SettingsFragment
 
 
 /**

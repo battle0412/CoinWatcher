@@ -1,14 +1,18 @@
 package com.im.app.coinwatcher.common
 
+import com.im.app.coinwatcher.json_data.Accounts
+import com.im.app.coinwatcher.json_data.Candles
+import com.im.app.coinwatcher.json_data.MarketAll
+import com.im.app.coinwatcher.json_data.MarketTicker
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
-import java.util.UUID
 
 interface UpbitRestService {
     /*
@@ -17,20 +21,20 @@ interface UpbitRestService {
     count 캔들 개수(최대 200개까지 요청 가능)
      */
     @GET("v1/candles/minutes/{unit}")
-    fun requestMinuteCandles(
+    suspend fun requestMinuteCandles(
         @Path("unit") unit: Int,
         @Query("market") market: String,
         @Query("count") count: Int
-    ): Call<ResponseBody>
+    ): Response<MutableList<Candles>>
     /*
     unit 일: days, 주: weeks, 월: months
      */
     @GET("v1/candles/{unit}")
-    fun requestCandles(
+    suspend fun requestCandles(
         @Path("unit") unit: String,
         @Query("market") market: String,
         @Query("count") count: Int
-    ): Call<ResponseBody>
+    ): Response<MutableList<Candles>>
 
     /*
     market *	마켓 ID (필수)	String
@@ -63,7 +67,7 @@ interface UpbitRestService {
     내가 보유한 자산 리스트
      */
     @GET("v1/accounts")
-    fun requestAccounts(): Call<ResponseBody>
+    suspend fun requestAccounts(): Response<MutableList<Accounts>>
 
     /*
     업비트에서 거래 가능한 마켓 목록
@@ -75,9 +79,9 @@ interface UpbitRestService {
     markets 반점으로 구분되는 마켓 코드 (ex. KRW-BTC, BTC-ETH)
      */
     @GET("v1/ticker")
-    fun requestMarketsTicker(
+    suspend fun requestMarketsTicker(
         @Query("markets") market: String
-    ): Call<ResponseBody>
+    ): Response<MutableList<MarketTicker>>
 
     /*
     주문번호로 주문조회

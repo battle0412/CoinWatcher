@@ -1,4 +1,4 @@
-package com.im.app.coinwatcher
+package com.im.app.coinwatcher.adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -9,8 +9,6 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.im.app.coinwatcher.common.decimalFormat
 import com.im.app.coinwatcher.databinding.RecyclerTradeItemBinding
-import com.im.app.coinwatcher.json_data.Order
-import com.im.app.coinwatcher.json_data.Trade
 import com.im.app.coinwatcher.json_data.TradeOrder
 
 class TradeHistoryFragmentAdapter(private var tradeList: MutableList<TradeOrder>

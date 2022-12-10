@@ -21,9 +21,9 @@ class GeneratorJWT {
             val algorithm: Algorithm = Algorithm.HMAC256(SECRET_KEY)
             val jwtToken = with(JWT.create()) {
                 withClaim("access_key", ACCESS_KEY)
-                withClaim("nonce", UUID.randomUUID().toString())
-                withClaim("expiresIn","1h")
-                    .withExpiresAt(Date(System.currentTimeMillis() + 30*1000))
+                withClaim("nonce", System.currentTimeMillis())//UUID.randomUUID().toString()
+                withClaim("expiresIn","20s")
+                    //.withExpiresAt(Date(System.currentTimeMillis() + 30*1000))
                 if (params != null) {
                     val paramStr = getQueryString(params)
 

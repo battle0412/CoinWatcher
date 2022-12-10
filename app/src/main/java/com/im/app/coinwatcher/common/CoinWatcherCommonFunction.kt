@@ -269,7 +269,7 @@ fun unitMapping(unitStr: String?): String{
         "일" -> "days"
         "주" -> "weeks"
         "월" -> "months"
-        else -> "days"
+        else -> "30"
     }
 }
 
@@ -392,19 +392,19 @@ fun numberFormat(input: String): String{
 
 @RequiresApi(Build.VERSION_CODES.N)
 suspend fun getCandles(marketItem: String, unitItem: String): MutableList<Candles>{
-        val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
+    val rest = RetrofitOkHttpManagerUpbit().restService
 
-        val responseStr = if (unitItem == "일" || unitItem == "주" || unitItem == "월")
-            responseSyncUpbitAPI(rest.requestCandles(unitMapping(unitItem), marketItem, 200))
+    val resultList = withContext(Dispatchers.IO){
+        if (unitItem == "일" || unitItem == "주" || unitItem == "월")
+            rest.requestCandles(unitMapping(unitItem), marketItem, 2).body()!!
         else
-            responseSyncUpbitAPI(
-                rest.requestMinuteCandles(
-                    unitMapping(unitItem).toInt(),
-                    marketItem,
-                    200
-                )
-            )
-        return getGsonList(responseStr, Candles::class.java)
+            rest.requestMinuteCandles(
+                unitMapping(unitItem).toInt(),
+                marketItem,
+                2
+            ).body()!!
+    }
+    return resultList
 }
 
 suspend fun responseSyncUpbitAPI(call: Call<ResponseBody>): String {

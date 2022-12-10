@@ -3,20 +3,18 @@ package com.im.app.coinwatcher
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.im.app.coinwatcher.common.*
+import com.im.app.coinwatcher.settings.KeySettingActivity
+import com.im.app.coinwatcher.sqlite.SQLiteManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.concurrent.thread
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity: AppCompatActivity() {
@@ -30,7 +28,6 @@ class SplashActivity: AppCompatActivity() {
                 result: ActivityResult ->
             if(result.resultCode == RESULT_OK){
                 IS_NIGHT = sharedPreferences.getBoolean("IS_NIGHT", false)
-                IS_RECEIVE_ALARM = sharedPreferences.getBoolean("IS_RECEIVE_ALARM", true)
                 ACCESS_KEY = sharedPreferences.getString("ACCESS_KEY", "").toString()
                 SECRET_KEY = sharedPreferences.getString("SECRET_KEY", "").toString()
                 val mainIntent = Intent(this@SplashActivity, MainActivity::class.java)
@@ -58,7 +55,6 @@ class SplashActivity: AppCompatActivity() {
                 startForResult.launch(keySettingIntent)
             } else {
                 IS_NIGHT = sharedPreferences.getBoolean("IS_NIGHT", false)
-                IS_RECEIVE_ALARM = sharedPreferences.getBoolean("IS_RECEIVE_ALARM", true)
                 ACCESS_KEY = sharedPreferences.getString("ACCESS_KEY", "").toString()
                 SECRET_KEY = sharedPreferences.getString("SECRET_KEY", "").toString()
 

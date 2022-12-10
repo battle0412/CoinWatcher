@@ -19,7 +19,7 @@
             android:exported="true"
             android:windowSoftInputMode="adjustNothing"
             />
-        <activity android:name=".KeySettingActivity"
+        <activity android:name=".settings.KeySettingActivity"
             android:theme="@style/settingDialog"
             android:exported="true"
             />
@@ -37,7 +37,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <service android:name=".AutoTradingService"/>
+        <service android:name=".auto_trading.AutoTradingService"/>
     </application>
 
 </manifest>

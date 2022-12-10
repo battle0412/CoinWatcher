@@ -1,12 +1,10 @@
-package com.im.app.coinwatcher
+package com.im.app.coinwatcher.settings
 
 import android.annotation.SuppressLint
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.im.app.coinwatcher.common.*
@@ -23,14 +21,8 @@ class SettingsFragment: Fragment() {
         binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
         with(binding){
-            alarmSwitching.isChecked = IS_RECEIVE_ALARM
             darkSwitching.isChecked = IS_NIGHT
             val sharedPreferences = SharedPreferenceManager.getSettingsPreference(requireContext())
-
-            alarmSwitching.setOnCheckedChangeListener { _, isChecked ->
-                sharedPreferences.edit().putBoolean("IS_RECEIVE_ALARM", isChecked).apply()
-                IS_RECEIVE_ALARM = isChecked
-            }
             darkSwitching.setOnCheckedChangeListener { _, isChecked ->
                 IS_NIGHT = isChecked
                 sharedPreferences.edit().putBoolean("IS_NIGHT", isChecked).apply()

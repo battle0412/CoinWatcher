@@ -1,16 +1,18 @@
-package com.im.app.coinwatcher
+package com.im.app.coinwatcher.auto_trading
 
 import android.annotation.SuppressLint
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.im.app.coinwatcher.common.SharedPreferenceManager
 import com.im.app.coinwatcher.databinding.FragmentAutoSellingBinding
 import kotlinx.android.synthetic.main.fragment_auto_selling.*
+import kotlin.math.round
 
 class AutoSellingFragment: Fragment() {
     private lateinit var binding: FragmentAutoSellingBinding
@@ -59,6 +61,12 @@ class AutoSellingFragment: Fragment() {
             volume.doAfterTextChanged {
                 sharedPreferences.edit().putString("volume", volume.text.toString()).apply()
             }
+            addCalculateClickEvent(rsiMorePlus ,rsiMore, "+")
+            addCalculateClickEvent(rsiMoreMinus, rsiMore, "-")
+            addCalculateClickEvent(stochasticSlowKMorePlus, stochasticSlowKMore, "+")
+            addCalculateClickEvent(stochasticSlowKMoreMinus, stochasticSlowKMore, "-")
+            addCalculateClickEvent(stochasticSlowDMorePlus, stochasticSlowDMore, "+")
+            addCalculateClickEvent(stochasticSlowDMoreMinus, stochasticSlowDMore, "-")
         }
         return binding.root
     }
@@ -86,7 +94,20 @@ class AutoSellingFragment: Fragment() {
             //isEnabled = savedInstanceState.getBoolean("textEditEnabled")
         }
     }*/
-
+   private fun addCalculateClickEvent(eventTextView: TextView, editText: EditText, calcType: String){
+       eventTextView.setOnClickListener {
+           var curValue =
+               if(editText.text.toString().trim().isEmpty())
+                   0F
+               else
+                   editText.text.toString().toFloat()
+           when(calcType){
+               "+" -> if(curValue + 1 < 100F) curValue += 1 else curValue = 100F
+               "-" -> if(curValue - 1 > 0F) curValue -= 1 else curValue = 0F
+           }
+           editText.setText((round(curValue * 100) / 100).toString())
+       }
+   }
     companion object{
         fun newInstance() = AutoSellingFragment()
     }

@@ -1,15 +1,12 @@
-package com.im.app.coinwatcher
+package com.im.app.coinwatcher.sqlite
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.im.app.coinwatcher.common.*
-import com.im.app.coinwatcher.json_data.Order
-import com.im.app.coinwatcher.json_data.Trade
 import com.im.app.coinwatcher.json_data.TradeOrder
 import java.util.*
 
@@ -98,7 +95,7 @@ class SQLiteManager(context: Context): SQLiteOpenHelper(
 
     companion object {
         private lateinit var dbInstance: SQLiteManager
-        fun getDBInstance(context: Context): SQLiteManager{
+        fun getDBInstance(context: Context): SQLiteManager {
             if(!this::dbInstance.isInitialized){
                 dbInstance = SQLiteManager(context)
             }

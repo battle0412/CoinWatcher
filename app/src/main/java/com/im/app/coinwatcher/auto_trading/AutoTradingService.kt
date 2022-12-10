@@ -1,4 +1,4 @@
-package com.im.app.coinwatcher
+package com.im.app.coinwatcher.auto_trading
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,17 +7,18 @@ import android.app.Service
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.google.gson.Gson
-import com.im.app.coinwatcher.JWT.GeneratorJWT.Companion.generateJWT
+import com.im.app.coinwatcher.MainActivity
+import com.im.app.coinwatcher.R
 import com.im.app.coinwatcher.common.*
 import com.im.app.coinwatcher.json_data.Order
 import com.im.app.coinwatcher.json_data.Orders
 import com.im.app.coinwatcher.okhttp_retrofit.RetrofitOkHttpManagerUpbit
+import com.im.app.coinwatcher.sqlite.SQLiteManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -124,7 +125,7 @@ class AutoTradingService: Service() {
                     val map = mutableMapOf<String, String>()
                     map["uuid"] = "ccc6b35f-ead3-42e3-a93a-fa64ac7d4eae"
                     insertTradingHD()
-                    val rest2 = RetrofitOkHttpManagerUpbit(generateJWT(map)).restService
+                    val rest2 = RetrofitOkHttpManagerUpbit(map).restService
                     val responseOrder = responseSyncUpbitAPI(rest2.requestOrder("ccc6b35f-ead3-42e3-a93a-fa64ac7d4eae"))
                     val order = getGsonData(responseOrder, Order::class.java)
                     insertTradingDT(order)
@@ -141,11 +142,11 @@ class AutoTradingService: Service() {
                     map["identifier"] = ""
                     val requestBody = Gson().toJson(map).toString()
                         .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-                    val rest = RetrofitOkHttpManagerUpbit(generateJWT(map)).restService
+                    val rest = RetrofitOkHttpManagerUpbit(map).restService
                     val responseOrders = responseSyncUpbitAPI(rest.requestOrders(requestBody))
                     val orders = getGsonData(responseOrders, Orders::class.java)
                     insertTradingHD()
-                    val rest2 = RetrofitOkHttpManagerUpbit(generateJWT()).restService
+                    val rest2 = RetrofitOkHttpManagerUpbit().restService
                     val responseOrder = responseSyncUpbitAPI(rest2.requestOrder(orders.uuid))
                     val order = getGsonData(responseOrder, Order::class.java)
                     insertTradingDT(order)

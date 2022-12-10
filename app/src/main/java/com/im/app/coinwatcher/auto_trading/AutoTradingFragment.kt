@@ -1,4 +1,4 @@
-package com.im.app.coinwatcher
+package com.im.app.coinwatcher.auto_trading
 
 import android.content.Intent
 import android.os.Build
@@ -6,23 +6,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import com.im.app.coinwatcher.JWT.GeneratorJWT.Companion.generateJWT
+import androidx.lifecycle.ViewModelProvider
+import com.im.app.coinwatcher.R
 import com.im.app.coinwatcher.common.*
 import com.im.app.coinwatcher.databinding.FragmentAutoTradingBinding
 import com.im.app.coinwatcher.json_data.Accounts
+import com.im.app.coinwatcher.json_data.Candles
 import com.im.app.coinwatcher.json_data.MarketAll
+import com.im.app.coinwatcher.model.factory.UpbitViewModel
+import com.im.app.coinwatcher.model.factory.UpbitViewModelFactory
 import com.im.app.coinwatcher.okhttp_retrofit.RetrofitOkHttpManagerUpbit
+import com.im.app.coinwatcher.repository.UpbitRepository
 import kotlinx.android.synthetic.main.fragment_auto_buying.*
 import kotlinx.coroutines.*
 
 class AutoTradingFragment: Fragment() {
     private lateinit var binding: FragmentAutoTradingBinding
-    private val coroutineMain = CoroutineScope(Dispatchers.Main)
+    private lateinit var viewModel: UpbitViewModel
+    private var flag = true
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,7 +34,19 @@ class AutoTradingFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentAutoTradingBinding.inflate(inflater, container, false)
-
+        viewModel = ViewModelProvider(
+            this, UpbitViewModelFactory(
+                UpbitRepository(RetrofitOkHttpManagerUpbit().restService)
+            )
+        )[UpbitViewModel::class.java]
+        viewModel.accounts.observe(viewLifecycleOwner){
+            setMyAsset(it)
+        }
+        viewModel.candles.observe(viewLifecycleOwner){
+            setTradingIndicator(it)
+            viewModel.getAccountsFromViewModel()
+        }
+        initSpinner()
         if(savedInstanceState == null){
             with(childFragmentManager.beginTransaction()){
                 add(R.id.autoTradingTabContent, AutoTradingTabFragment.newInstance())
@@ -60,83 +76,60 @@ class AutoTradingFragment: Fragment() {
                     setTextEditEnabled(true)
                 }
             }
-
             marketItems.setOnItemClickListener { _, _, _, _ ->
                 val unitText = marketItems.text.toString()
                 sharedPreferences.edit().putString("market",unitText ).apply()
-                CoroutineScope(Dispatchers.IO).launch {
-                    setTradingIndicator()
-                }
+                requestViewModel()
             }
             unitItems.setOnItemClickListener { _, _, _, _ ->
                 val unitText = unitItems.text.toString()
                 sharedPreferences.edit().putString("unit",unitText ).apply()
-                CoroutineScope(Dispatchers.IO).launch {
-                    setTradingIndicator()
-                }
+                requestViewModel()
             }
         }
-
         return binding.root
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        CoroutineScope(Dispatchers.IO).launch {
-            with(binding){
-                val rest = RetrofitOkHttpManagerUpbit(generateJWT()).restService
-                val responseStr = responseSyncUpbitAPI(rest.requestMarketAll())
-                val kwrArray = ArrayList<String>()
-                getGsonList(responseStr, MarketAll::class.java)
-                    .filter { marketAll -> marketAll.market.contains("KRW") }//마켓 목록중 원화만 취급
-                    .forEach {
-                        kwrArray.add(it.market)
-                    }
-                val adapter = ArrayAdapter(
-                    requireContext(),
-                    androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
-                    kwrArray
-                )
-                val adapter2 = ArrayAdapter(
-                    requireContext(),
-                    androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
-                    getUnits()
-                )
-                val sharedPreferences = SharedPreferenceManager.getAutoTradingPreference(requireContext())
-                withContext(Dispatchers.Main){
-                    marketItems.setText(sharedPreferences.getString("market", "KRW-BTC"))
-                    unitItems.setText(sharedPreferences.getString("unit", "1분"))
-                    marketItems.setAdapter(adapter)
-                    unitItems.setAdapter(adapter2)
-                }
-                setTradingIndicator()
+        CoroutineScope(Dispatchers.IO).launch{
+            while (flag){
+                delay(5000L)
+                requestViewModel()
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private suspend fun setTradingIndicator(){
+    private fun setTradingIndicator(candles: MutableList<Candles>){
         with(binding){
             val marketItem = marketItems.text.toString()
             val unitItem = unitItems.text.toString()
             if(marketItem.isNotEmpty()
                 && unitItem.isNotEmpty()){
 
-                val candles = getCandles(marketItem, unitItem)
                 val stochasticList = stochasticFastSlow(candles)
                 val rsi = calculateRSI(candles)
-
-                val rest = RetrofitOkHttpManagerUpbit(generateJWT()).restService
-                val responseStr = responseSyncUpbitAPI(rest.requestAccounts())
-                val accounts = getGsonList(responseStr, Accounts::class.java)
                 CoroutineScope(Dispatchers.Main).launch {
-                    //보여줄떄는 주석
                     priceTV.setText(decimalFormat(candles[0].trade_price, 0))
                     rsiTV.setText(decimalFormat(rsi, 2))
                     stochasticSlowKTV.setText(decimalFormat(stochasticList[0]))
                     stochasticSlowDTV.setText(decimalFormat(stochasticList[1]))
-
+                }
+            }
+        }
+    }
+    private fun setMyAsset(accounts: MutableList<Accounts>){
+        with(binding){
+            val marketItem = marketItems.text.toString()
+            val unitItem = unitItems.text.toString()
+            if(marketItem.isNotEmpty()
+                && unitItem.isNotEmpty()){
+                CoroutineScope(Dispatchers.Main).launch {
+                    myAssetTV.setText("0")
+                    myLockedTV.setText("0")
+                    volumeTV.setText("0")
                     accounts.forEach {
                         when (it.currency) {
                             "KRW" -> {
@@ -152,18 +145,18 @@ class AutoTradingFragment: Fragment() {
                     stochasticSlowKTV.setText(decimalFormat(stochasticList[0]))
                     stochasticSlowDTV.setText(decimalFormat(stochasticList[1]))*/
 
-                    accounts.forEach {
+                    /*accounts.forEach {
                         when (it.currency) {
                             "KRW" -> {
-                                /*myAssetTV.setText("1,000.0")
-                                myLockedTV.setText("10,000")*/
+                                *//*myAssetTV.setText("1,000.0")
+                                myLockedTV.setText("10,000")*//*
                                 myAssetTV.setText(decimalFormat(it.balance.toFloat(), 0))
-                                myAssetTV.setText(decimalFormat(it.locked.toFloat(), 0))
+                                myLockedTV.setText(decimalFormat(it.locked.toFloat(), 0))
                             }
                             marketItem.split("-")[1] ->
                                 volumeTV.setText(decimalFormat(it.balance.toFloat(), false))
                         }
-                    }
+                    }*/
                 }
             }
         }
@@ -216,6 +209,46 @@ class AutoTradingFragment: Fragment() {
         return intent
     }
 
+    private fun requestViewModel(){
+        with(binding){
+            viewModel.getCandlesFromViewModel(unitItems.text.toString(), marketItems.text.toString(), 200)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun initSpinner(){
+        CoroutineScope(Dispatchers.IO).launch {
+            with(binding){
+                val rest = RetrofitOkHttpManagerUpbit().restService
+                val responseStr = responseSyncUpbitAPI(rest.requestMarketAll())
+                val kwrArray = ArrayList<String>()
+                getGsonList(responseStr, MarketAll::class.java)
+                    .filter { marketAll -> marketAll.market.contains("KRW") }//마켓 목록중 원화만 취급
+                    .forEach {
+                        kwrArray.add(it.market)
+                    }
+                val adapter = ArrayAdapter(
+                    requireContext(),
+                    androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                    kwrArray
+                )
+                val adapter2 = ArrayAdapter(
+                    requireContext(),
+                    androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                    getUnits()
+                )
+                val sharedPreferences = SharedPreferenceManager.getAutoTradingPreference(requireContext())
+                withContext(Dispatchers.Main) {
+                    marketItems.setText(sharedPreferences.getString("market", "KRW-BTC"))
+                    unitItems.setText(sharedPreferences.getString("unit", "1분"))
+                    marketItems.setAdapter(adapter)
+                    unitItems.setAdapter(adapter2)
+                }
+                requestViewModel()
+            }
+        }
+    }
+
     companion object{
         fun newInstance() = AutoTradingFragment()
         fun newInstance(intent: Intent): AutoTradingFragment {
@@ -223,5 +256,10 @@ class AutoTradingFragment: Fragment() {
             fragment.arguments = intent.extras
             return fragment
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        flag = false
     }
 }

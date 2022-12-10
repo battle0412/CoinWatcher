@@ -1,4 +1,4 @@
-package com.im.app.coinwatcher
+package com.im.app.coinwatcher.adapter
 
 import android.content.Context
 import android.graphics.Rect

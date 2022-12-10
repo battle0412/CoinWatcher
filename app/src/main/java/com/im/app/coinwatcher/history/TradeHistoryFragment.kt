@@ -1,4 +1,4 @@
-package com.im.app.coinwatcher
+package com.im.app.coinwatcher.history
 
 import android.app.Activity
 import android.content.Context
@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.im.app.coinwatcher.adapter.MarketItemDecoration
+import com.im.app.coinwatcher.adapter.TradeHistoryFragmentAdapter
 import com.im.app.coinwatcher.common.DATABASE_NAME
-import com.im.app.coinwatcher.common.SoundSearcher
 import com.im.app.coinwatcher.databinding.FragmentTransactionHistoryBinding
+import com.im.app.coinwatcher.sqlite.SQLiteManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

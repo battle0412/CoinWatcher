@@ -2,30 +2,29 @@ package com.im.app.coinwatcher
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnKeyListener
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.im.app.coinwatcher.JWT.GeneratorJWT
+import com.im.app.coinwatcher.adapter.CoinListFragmentAdapter
+import com.im.app.coinwatcher.adapter.MarketItemDecoration
 import com.im.app.coinwatcher.common.SoundSearcher
 import com.im.app.coinwatcher.common.getGsonList
 import com.im.app.coinwatcher.common.responseSyncUpbitAPI
 import com.im.app.coinwatcher.databinding.FragmentCoinListBinding
 import com.im.app.coinwatcher.json_data.MarketAll
 import com.im.app.coinwatcher.json_data.MarketTicker
+import com.im.app.coinwatcher.model.factory.UpbitViewModel
+import com.im.app.coinwatcher.model.factory.UpbitViewModelFactory
 import com.im.app.coinwatcher.okhttp_retrofit.RetrofitOkHttpManagerUpbit
+import com.im.app.coinwatcher.repository.UpbitRepository
 import kotlinx.coroutines.*
-import retrofit2.await
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -33,11 +32,11 @@ import kotlin.collections.HashMap
 class CoinListFragment: Fragment() {
 
     private lateinit var binding: FragmentCoinListBinding
-    private lateinit var kwrMarketList: MutableList<MarketAll>
     private lateinit var marketList: MutableList<MarketTicker>
     private var kwrMap = HashMap<String, MarketAll>()
     private var filteredKwrMap = HashMap<String, MarketAll>()
     private var flag = true
+    private lateinit var viewModel: UpbitViewModel
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
@@ -46,6 +45,12 @@ class CoinListFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentCoinListBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(
+            this, UpbitViewModelFactory(
+                UpbitRepository(RetrofitOkHttpManagerUpbit().restService)
+            )
+        )[UpbitViewModel::class.java]
+
         with(binding.searchCoin){
             this.doAfterTextChanged {
                 if(this.text.toString().trim().isNotEmpty()){
@@ -56,11 +61,38 @@ class CoinListFragment: Fragment() {
                             filteredKwrMap[it.key] = it.value
                         }*/
                     }
-                    recyclerViewUpdate()
+                    requestMarketTicker(filteredKwrMap)
+                    //recyclerViewUpdate()
                 }
             }
         }
+        viewModel.marketTicker.observe(viewLifecycleOwner){
+            with(binding.marketRV){
+                val orderedMarketTicker = it.sortedByDescending {
+                        MarketTicker -> MarketTicker.acc_trade_price_24h
+                } as MutableList<MarketTicker>
 
+                if(adapter == null){
+                    val manager = LinearLayoutManager(activity as Activity, LinearLayoutManager.VERTICAL, false)
+                    val deco = MarketItemDecoration(requireContext(), 5, 8, 5, 8)
+                    addItemDecoration(deco)
+                    layoutManager = manager
+                    adapter = CoinListFragmentAdapter(orderedMarketTicker, kwrMap, this@CoinListFragment)
+                }
+                else{
+                    val recyclerViewState = layoutManager!!.onSaveInstanceState()
+                    adapter = if(binding.searchCoin.text!!.isNotEmpty()){
+                        val tmpList = orderedMarketTicker.filter {
+                            SoundSearcher.matchString(marketMapping(it.market), binding.searchCoin.text.toString())
+                        }.toMutableList()
+
+                        CoinListFragmentAdapter(tmpList, kwrMap, this@CoinListFragment)
+                    } else
+                        CoinListFragmentAdapter(orderedMarketTicker, kwrMap, this@CoinListFragment)
+                    layoutManager!!.onRestoreInstanceState(recyclerViewState)
+                }
+            }
+        }
         return binding.root
     }
 
@@ -70,7 +102,10 @@ class CoinListFragment: Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             initMarketList()
             while(flag){
-                requestCoinList()
+                if(binding.searchCoin.text!!.isNotEmpty())
+                    requestMarketTicker(filteredKwrMap)
+                else
+                    requestMarketTicker(kwrMap)
                 delay(5000L)
             }
         }
@@ -78,22 +113,22 @@ class CoinListFragment: Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     @RequiresApi(Build.VERSION_CODES.N)
-    private suspend fun requestCoinList(){
+    private fun requestMarketTicker(kwrMap: HashMap<String, MarketAll>){
         val tmpList = mutableListOf<String>()
         kwrMap.forEach { (key, _) -> tmpList.add(key) }
         val kwrMarketStr = tmpList.joinToString(
             separator = ","
         )
-        val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
-        val responseBody = responseSyncUpbitAPI(rest.requestMarketsTicker(kwrMarketStr))
-        marketList = getGsonList(responseBody, MarketTicker::class.java)
-            .sortedByDescending { MarketTicker -> MarketTicker.acc_trade_price_24h } as MutableList<MarketTicker>
-        recyclerViewUpdate()
+        //val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
+        viewModel.getMarketTickerFromViewModel(kwrMarketStr)
+    /*    marketList = getGsonList(responseBody, MarketTicker::class.java)
+            .sortedByDescending { MarketTicker -> MarketTicker.acc_trade_price_24h } as MutableList<MarketTicker>*/
+        //recyclerViewUpdate()
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     private suspend fun initMarketList(){
-        val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
+        val rest = RetrofitOkHttpManagerUpbit().restService
         val responseStr = responseSyncUpbitAPI(rest.requestMarketAll())
         getGsonList(responseStr, MarketAll::class.java)
             .filter { marketAll -> marketAll.market.contains("KRW") }//마켓 목록중 원화만 취급
@@ -131,7 +166,6 @@ class CoinListFragment: Fragment() {
 
 
                     layoutManager!!.onRestoreInstanceState(recyclerViewState)
-
                 }
             }
         }

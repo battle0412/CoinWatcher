@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="90dp"
-    android:layout_height="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="90dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#BF000000">
+    android:padding="10dp"
+    style="@style/customMarker">
     <LinearLayout
         android:id="@+id/dateTime"
         android:layout_width="match_parent"
@@ -161,4 +162,4 @@
             android:textColor="@color/white"
             />
     </LinearLayout>
-</androidx.appcompat.widget.LinearLayoutCompat>
+</LinearLayout>

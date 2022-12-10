@@ -1,4 +1,4 @@
-package com.im.app.coinwatcher
+package com.im.app.coinwatcher.auto_trading
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -6,21 +6,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.im.app.coinwatcher.common.*
 import com.im.app.coinwatcher.databinding.FragmentAutoBuyingBinding
 import kotlinx.android.synthetic.main.fragment_auto_buying.view.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
+import kotlin.math.round
 
 class AutoBuyingFragment: Fragment() {
     private lateinit var binding: FragmentAutoBuyingBinding
     private var bundle = Bundle()
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint("CommitPrefEdits", "SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,6 +60,12 @@ class AutoBuyingFragment: Fragment() {
             buyPrice.doAfterTextChanged {
                 sharedPreferences.edit().putString("buyPrice", buyPrice.text.toString()).apply()
             }
+            addCalculateClickEvent(rsiLessPlus ,rsiLess, "+")
+            addCalculateClickEvent(rsiLessMinus, rsiLess, "-")
+            addCalculateClickEvent(stochasticSlowKLessPlus, stochasticSlowKLess, "+")
+            addCalculateClickEvent(stochasticSlowKLessMinus, stochasticSlowKLess, "-")
+            addCalculateClickEvent(stochasticSlowDLessPlus, stochasticSlowDLess, "+")
+            addCalculateClickEvent(stochasticSlowDLessMinus, stochasticSlowDLess, "-")
         }
         return binding.root
     }
@@ -89,6 +94,21 @@ class AutoBuyingFragment: Fragment() {
         }
         arguments = bundle
     }*/
+
+    private fun addCalculateClickEvent(eventTextView: TextView, editText: EditText, calcType: String){
+        eventTextView.setOnClickListener {
+            var curValue =
+                if(editText.text.toString().trim().isEmpty())
+                    0F
+                else
+                    editText.text.toString().toFloat()
+            when(calcType){
+                "+" -> if(curValue + 1 < 100F) curValue += 1 else curValue = 100F
+                "-" -> if(curValue - 1 > 0F) curValue -= 1 else curValue = 0F
+            }
+            editText.setText((round(curValue * 100) / 100).toString())
+        }
+    }
 
     companion object{
         fun newInstance() = AutoBuyingFragment()

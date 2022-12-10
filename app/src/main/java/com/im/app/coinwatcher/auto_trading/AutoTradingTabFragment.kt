@@ -1,4 +1,4 @@
-package com.im.app.coinwatcher
+package com.im.app.coinwatcher.auto_trading
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayout
+import com.im.app.coinwatcher.R
 import com.im.app.coinwatcher.databinding.FragmentAutoTradingTabBinding
 
 class AutoTradingTabFragment: Fragment() {

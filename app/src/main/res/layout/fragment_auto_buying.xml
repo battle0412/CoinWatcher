@@ -18,7 +18,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="6"
+                android:layout_weight="3"
                 style="@style/autoTradingEditTextRight"
                 android:text="@string/rsi"/>
             <EditText
@@ -26,12 +26,28 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textCursorDrawable="?attr/colorAccent"
-                android:layout_weight="4"
+                android:layout_weight="3"
                 android:hint="@string/less"
                 android:textAlignment="textEnd"
                 android:inputType="numberDecimal"
                 style="@style/autoTradingEditTextLeft"
                 android:maxLines="1" />
+            <TextView
+                android:id="@+id/rsiLessPlus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginStart="5dp"
+                style="@style/autoTradingTextViewPlusMinus"
+                android:text="@string/plus"/>
+            <TextView
+                android:id="@+id/rsiLessMinus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginStart="5dp"
+                style="@style/autoTradingTextViewPlusMinus"
+                android:text="@string/minus"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,7 +59,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="6"
+                android:layout_weight="3"
                 style="@style/autoTradingEditTextRight"
                 android:text="@string/stochasticSlowKShortName"/>
             <EditText
@@ -51,11 +67,27 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 style="@style/autoTradingEditTextLeft"
-                android:layout_weight="4"
+                android:layout_weight="3"
                 android:hint="@string/less"
                 android:textAlignment="textEnd"
                 android:inputType="numberDecimal"
                 android:maxLines="1" />
+            <TextView
+                android:id="@+id/stochasticSlowKLessPlus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginStart="5dp"
+                style="@style/autoTradingTextViewPlusMinus"
+                android:text="@string/plus"/>
+            <TextView
+                android:id="@+id/stochasticSlowKLessMinus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginStart="5dp"
+                style="@style/autoTradingTextViewPlusMinus"
+                android:text="@string/minus"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,18 +100,34 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 style="@style/autoTradingEditTextRight"
-                android:layout_weight="6"
+                android:layout_weight="3"
                 android:text="@string/stochasticSlowDShortName"/>
             <EditText
                 android:id="@+id/stochasticSlowDLess"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 style="@style/autoTradingEditTextLeft"
-                android:layout_weight="4"
+                android:layout_weight="3"
                 android:hint="@string/less"
                 android:textAlignment="textEnd"
                 android:inputType="numberDecimal"
                 android:maxLines="1" />
+            <TextView
+                android:id="@+id/stochasticSlowDLessPlus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginStart="5dp"
+                style="@style/autoTradingTextViewPlusMinus"
+                android:text="@string/plus"/>
+            <TextView
+                android:id="@+id/stochasticSlowDLessMinus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginStart="5dp"
+                style="@style/autoTradingTextViewPlusMinus"
+                android:text="@string/minus"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

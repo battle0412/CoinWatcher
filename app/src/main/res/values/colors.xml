@@ -40,6 +40,9 @@
     <color name="nightNavigationBarColor">#FF212121</color>
     <color name="nightColorAccent">#FFD3D4D6</color>
     <color name="nightTextInputOutlinedStyle">#FF152131</color>
+
+    <!--마커-->
+    <color name="markerBackground">#99212121</color>
 </resources>
 <!--
 투명도     색상

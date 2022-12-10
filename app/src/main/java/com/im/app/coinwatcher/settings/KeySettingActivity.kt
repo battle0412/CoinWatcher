@@ -1,8 +1,7 @@
-package com.im.app.coinwatcher
+package com.im.app.coinwatcher.settings
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.im.app.coinwatcher.common.*
@@ -21,11 +20,9 @@ class KeySettingActivity: AppCompatActivity() {
                 val sharedPreference = getSharedPreferences("GZASettings", Context.MODE_PRIVATE)
                 with(sharedPreference.edit()){
                     IS_NIGHT = false
-                    IS_RECEIVE_ALARM = true
                     ACCESS_KEY = accesskeyED.text.toString()
                     SECRET_KEY = secretkeyED.text.toString()
                     this.putBoolean("IS_NIGHT", false)
-                    this.putBoolean("IS_RECEIVE_ALARM", true)
                     this.putString("ACCESS_KEY", accesskeyED.text.toString())
                     this.putString("SECRET_KEY", secretkeyED.text.toString())
                     this.apply()

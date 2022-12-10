@@ -13,8 +13,8 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
+import androidx.lifecycle.ViewModelProvider
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.CandleStickChart
 import com.github.mikephil.charting.components.XAxis.XAxisPosition
@@ -23,11 +23,17 @@ import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.im.app.coinwatcher.chart.CustomMarkerView
-import com.im.app.coinwatcher.chart.MarkerContent
+import com.im.app.coinwatcher.chart_marker.BarMarker
+import com.im.app.coinwatcher.chart_marker.BarMarkerView
+import com.im.app.coinwatcher.chart_marker.CandleMarkerView
+import com.im.app.coinwatcher.chart_marker.CandleMarker
 import com.im.app.coinwatcher.common.*
 import com.im.app.coinwatcher.databinding.FragmentBottomSheetBinding
 import com.im.app.coinwatcher.json_data.Candles
+import com.im.app.coinwatcher.model.factory.UpbitViewModel
+import com.im.app.coinwatcher.model.factory.UpbitViewModelFactory
+import com.im.app.coinwatcher.okhttp_retrofit.RetrofitOkHttpManagerUpbit
+import com.im.app.coinwatcher.repository.UpbitRepository
 import kotlinx.android.synthetic.main.fragment_bottom_sheet.*
 import kotlinx.android.synthetic.main.fragment_bottom_sheet.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -40,6 +46,7 @@ class BottomSheetFragment: BottomSheetDialogFragment() {
     private lateinit var binding: FragmentBottomSheetBinding
     private lateinit var csChart: CandleStickChart
     private lateinit var bChart: BarChart
+    private lateinit var viewModel: UpbitViewModel
     private var flag = true
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
@@ -49,6 +56,16 @@ class BottomSheetFragment: BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentBottomSheetBinding.inflate(inflater, container, false)
+
+        initCandleChartSetting()
+        initBarChartSetting()
+
+        viewModel = ViewModelProvider(
+            this, UpbitViewModelFactory(
+                UpbitRepository(RetrofitOkHttpManagerUpbit().restService)
+            )
+        )[UpbitViewModel::class.java]
+
         with(binding){
             val market = arguments?.let {
                 it.getString("bottomSheetMarket") ?: ""
@@ -69,15 +86,36 @@ class BottomSheetFragment: BottomSheetDialogFragment() {
             unitItems.setOnItemClickListener { _, _, _, _ ->
                 val unitText = unitItems.text.toString()
                 sharedPreferences.edit().putString("chartUnit",unitText ).apply()
-                CoroutineScope(Dispatchers.IO).launch {
+                csChart.data?.clearValues()
+                bChart.data?.clearValues()
+                requestCandleToViewModel()
+                /*CoroutineScope(Dispatchers.IO).launch {
                     val candles = getCandles(market,unitText)
                     flag = false
                     setCandleChartData(candles)
                     setBarChartData(candles)
                     flag = true
                     startMinuteCandleAPI(market)
+                }*/
+            }
+            viewModel.candles.observe(viewLifecycleOwner){
+                CoroutineScope(Dispatchers.IO).launch {
+                    flag = false
+                    setCandleChartData(it)
+                    setBarChartData(it)
+                    flag = true
+                    startMinuteCandleAPI()
                 }
             }
+            /*viewModel.minuteCandles.observe(viewLifecycleOwner){
+                CoroutineScope(Dispatchers.IO).launch {
+                    flag = false
+                    setCandleChartData(it)
+                    setBarChartData(it)
+                    flag = true
+                    startMinuteCandleAPI()
+                }
+            }*/
         }
         return binding.root
     }
@@ -88,22 +126,240 @@ class BottomSheetFragment: BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setBottomSheetHeight(70)
-
-        val market = arguments?.let {
-            it.getString("bottomSheetMarket") ?: ""
-        } ?: ""
-        val marketUnit = SharedPreferenceManager.getSettingsPreference(requireContext()).getString("marketUnit", "5분") ?: ""
         CoroutineScope(Dispatchers.IO).launch {
-            val candles = getCandles(market, marketUnit)
-            setCandleChartData(candles)
-            setBarChartData(candles)
-            startMinuteCandleAPI(market)
+            requestCandleToViewModel()
         }
     }
 
     @SuppressLint("SimpleDateFormat")
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun setCandleChartData(candles: MutableList<Candles>){
+        val set1 = CandleDataSet(getCandleEntry(candles), "")
+        set1.setDrawIcons(false)
+        set1.axisDependency = YAxis.AxisDependency.RIGHT
+//        set1.setColor(Color.rgb(80, 80, 80));
+        set1.shadowColor = Color.DKGRAY
+        //set1.shadowWidth = 0.7f
+        set1.decreasingColor = Color.BLUE
+        set1.decreasingPaintStyle = Paint.Style.FILL //FILL: 캔들 채움, STROKE: 테두리만 표시
+        set1.increasingColor = Color.RED//Color.rgb(122, 242, 84)
+        set1.increasingPaintStyle = Paint.Style.FILL
+        set1.neutralColor = Color.WHITE
+        set1.setDrawValues(false)//캔들의 데이터 표시 숨김
+        //set1.setHighlightLineWidth(1f);
+        val data = CandleData(set1)
+        csChart.marker = CandleMarkerView(context, R.layout.candle_marker)
+        csChart.data = data
+        CoroutineScope(Dispatchers.Main).launch{
+            //csChart.setBackgroundColor(Color.WHITE)
+            csChart.invalidate()
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getCandleEntry(dataset: List<Candles>, isPreRemove: Boolean = true): ArrayList<CandleEntry> {
+        val values = ArrayList<CandleEntry>()
+
+        val index: Int = csChart.data?.let {
+            if(isPreRemove) it.entryCount else it.entryCount - 1
+        } ?: 0
+        /*val index: Int = chart.data?.apply {
+            if(isRemove) this.dataSets[0].removeEntry(this.entryCount - 1)
+        }?.let {
+            it.entryCount - 1
+        } ?: 0*/
+
+        for (i in dataset.lastIndex downTo 0 ) {
+            with(dataset[i]){
+                val candleMarker = CandleMarker(
+                    decimalFormat(high_price),
+                    decimalFormat(low_price),
+                    decimalFormat(opening_price),
+                    decimalFormat(trade_price),
+                    //candle_date_time_kst foramt yyyy-MM-dd'T'HH:mm:ss
+                    candle_date_time_kst,
+                    decimalFormat(candle_acc_trade_volume, 3)
+                )
+                values.add(
+                    CandleEntry(
+                        (dataset.lastIndex - i + index).toFloat(),
+                        high_price.toFloat(),
+                        low_price.toFloat(),
+                        opening_price.toFloat(),
+                        trade_price.toFloat(),
+                        candleMarker
+                    )
+                )
+            }
+        }
+        return values
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun setBarChartData(candles: MutableList<Candles>){
+        val set1 = BarDataSet(getBarEntry(candles), "")
+
+        /*set1.setDrawIcons(false)
+        val startColor1 = ContextCompat.getColor(this, android.R.color.holo_orange_light)
+        val startColor2 = ContextCompat.getColor(this, android.R.color.holo_blue_light)
+        val startColor3 = ContextCompat.getColor(this, android.R.color.holo_orange_light)
+        val startColor4 = ContextCompat.getColor(this, android.R.color.holo_green_light)
+        val startColor5 = ContextCompat.getColor(this, android.R.color.holo_red_light)
+        val endColor1 = ContextCompat.getColor(this, android.R.color.holo_blue_dark)
+        val endColor2 = ContextCompat.getColor(this, android.R.color.holo_purple)
+        val endColor3 = ContextCompat.getColor(this, android.R.color.holo_green_dark)
+        val endColor4 = ContextCompat.getColor(this, android.R.color.holo_red_dark)
+        val endColor5 = ContextCompat.getColor(this, android.R.color.holo_orange_dark)
+        val gradientFills: MutableList<Fill> = java.util.ArrayList<Fill>()
+        gradientFills.add(Fill(startColor1, endColor1))
+        gradientFills.add(Fill(startColor2, endColor2))
+        gradientFills.add(Fill(startColor3, endColor3))
+        gradientFills.add(Fill(startColor4, endColor4))
+        gradientFills.add(Fill(startColor5, endColor5))
+        set1.setFills(gradientFills)*/
+        set1.color = getColor(requireContext(), android.R.color.holo_orange_dark)
+        val dataSets = ArrayList<IBarDataSet>()
+        dataSets.add(set1)
+        val data = BarData(dataSets)
+        //data.setValueTextSize(10f)
+        data.setDrawValues(false)
+        data.barWidth = 0.9f
+        bChart.marker = BarMarkerView(context, R.layout.bar_marker)
+        bChart.data = data
+        bChart.legend.isEnabled = false
+        CoroutineScope(Dispatchers.Main).launch{
+            //bChart.setBackgroundColor(Color.WHITE)
+            bChart.invalidate()
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getBarEntry(dataset: List<Candles>, isPreRemove: Boolean = true): ArrayList<BarEntry> {
+        val values = ArrayList<BarEntry>()
+
+        val index: Int = bChart.data?.let {
+            if(isPreRemove) it.entryCount else it.entryCount - 1
+        } ?: 0
+        /*val index: Int = chart.data?.apply {
+            if(isRemove) this.dataSets[0].removeEntry(this.entryCount - 1)
+        }?.let {
+            it.entryCount - 1
+        } ?: 0*/
+
+        for (i in dataset.lastIndex downTo 0 ) {
+            with(dataset[i]){
+                val barMarker = BarMarker(
+                    candle_date_time_kst,
+                    decimalFormat(candle_acc_trade_volume, 3)
+                )
+                values.add(
+                    BarEntry(
+                        (dataset.lastIndex - i + index).toFloat(),
+                        candle_acc_trade_volume.toFloat(),
+                        barMarker
+                    )
+                )
+            }
+        }
+        return values
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun setBottomSheetHeight(heightRate: Int) {
+        val bottomSheet = dialog!!.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        val behavior = BottomSheetBehavior.from(bottomSheet)
+        val layoutParams = bottomSheet.layoutParams
+        /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val windowMetrics = windowManager.defaultDisplay
+            requireContext().display!!.height
+        } else {
+
+            val layoutParams = bottomSheet.layoutParams
+            val displayMetrics = DisplayMetrics()
+            (requireContext() as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+            layoutParams.height = displayMetrics.heightPixels * heightRate / 100
+            bottomSheet.layoutParams = layoutParams
+        }*/
+        layoutParams.height = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowMetrics = requireActivity().windowManager.currentWindowMetrics
+            val insets: Insets = windowMetrics.windowInsets
+                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            (windowMetrics.bounds.height() - insets.top - insets.bottom) * heightRate / 100
+        } else {
+            val displayMetrics = DisplayMetrics()
+            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+            displayMetrics.heightPixels * heightRate / 100
+        }
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun startMinuteCandleAPI(){
+        while (flag){
+            val market = arguments?.let {
+                it.getString("bottomSheetMarket") ?: ""
+            } ?: ""
+            val marketUnit = binding.unitItems.text.toString()
+            val candles = getCandles(market, marketUnit)
+            val values = ArrayList<Candles>()
+            if(!this::csChart.isInitialized
+                || !this::bChart.isInitialized
+                || csChart.data.dataSets.size == 0
+                || bChart.data.dataSets.size == 0)
+                return
+            with(csChart.data.dataSets[0]){//차트테이터
+                val bThis = bChart.data.dataSets[0]
+                val index = this.entryCount - 1 //데이터 크기-1 -> 인덱스
+                val chartData = this.getEntryForIndex(index).data as CandleMarker //마커 데이터 클래스로 형변환
+                if(candles[0].candle_date_time_kst == chartData.dateTime){//API 값 == 차트 데이터 날짜 -> 마지막 차트 데이터만 업데이트
+                    values.add(candles[0])
+                    this.removeEntry(index)
+                    bThis.removeEntry(index)
+                    this.addEntry(getCandleEntry(values)[0])
+                    bThis.addEntry(getBarEntry(values)[0])
+                } else if(candles[0].candle_date_time_kst > chartData.dateTime) {//API 값 > 차트 데이터 날짜 -> 마지막 데이터 업데이트 후 API 최신데이터 추가
+                    //최신 데이터가 먼저 오기 때문에 차트에 데이터를 넣기 전 getCandleEntry에서 downTo로 리스트를 만듦
+                    //candleData[0]이 entries[1]이 된다
+                    values.add(candles[0])
+                    values.add(candles[1])
+                    this.removeEntry(index)
+                    bThis.removeEntry(index)
+                    val entries = getCandleEntry(values)
+                    val barEntries = getBarEntry(values)
+                    this.addEntry(entries[0])
+                    this.addEntry(entries[1])
+                    bThis.addEntry(barEntries[0])
+                    bThis.addEntry(barEntries[1])
+                }
+                values.clear()
+            }
+            csChart.data.notifyDataChanged()
+            csChart.notifyDataSetChanged()
+            bChart.data.notifyDataChanged()
+            bChart.notifyDataSetChanged()
+            CoroutineScope(Dispatchers.Main).launch {
+                csChart.invalidate()
+                bChart.invalidate()
+            }
+            delay(5000L)
+        }
+    }
+
+    private fun requestCandleToViewModel(){
+        val market = arguments?.let {
+            it.getString("bottomSheetMarket") ?: ""
+        } ?: ""
+        with(binding.unitItems.text.toString()){
+            viewModel.getCandlesFromViewModel(this, market, 200)
+        }
+
+    }
+
+    private fun initCandleChartSetting(){
         with(binding){
             csChart = candleStickChart
         }
@@ -173,71 +429,8 @@ class BottomSheetFragment: BottomSheetDialogFragment() {
                 )
             }
         }*/
-        val set1 = CandleDataSet(getCandleEntry(candles), "")
-        set1.setDrawIcons(false)
-        set1.axisDependency = YAxis.AxisDependency.RIGHT
-//        set1.setColor(Color.rgb(80, 80, 80));
-        set1.shadowColor = Color.DKGRAY
-        //set1.shadowWidth = 0.7f
-        set1.decreasingColor = Color.BLUE
-        set1.decreasingPaintStyle = Paint.Style.FILL //FILL: 캔들 채움, STROKE: 테두리만 표시
-        set1.increasingColor = Color.RED//Color.rgb(122, 242, 84)
-        set1.increasingPaintStyle = Paint.Style.FILL
-        set1.neutralColor = Color.WHITE
-        set1.setDrawValues(false)//캔들의 데이터 표시 숨김
-        //set1.setHighlightLineWidth(1f);
-        val data = CandleData(set1)
-        csChart.marker = CustomMarkerView(context, R.layout.custom_marker)
-        csChart.data = data
-        CoroutineScope(Dispatchers.Main).launch{
-            //csChart.setBackgroundColor(Color.WHITE)
-            csChart.invalidate()
-        }
     }
-
-    @SuppressLint("SimpleDateFormat")
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun getCandleEntry(dataset: List<Candles>, isPreRemove: Boolean = true): ArrayList<CandleEntry> {
-        val values = ArrayList<CandleEntry>()
-
-        val index: Int = csChart.data?.let {
-            if(isPreRemove) it.entryCount else it.entryCount - 1
-        } ?: 0
-        /*val index: Int = chart.data?.apply {
-            if(isRemove) this.dataSets[0].removeEntry(this.entryCount - 1)
-        }?.let {
-            it.entryCount - 1
-        } ?: 0*/
-
-        for (i in dataset.lastIndex downTo 0 ) {
-            with(dataset[i]){
-                val markerContent = MarkerContent(
-                    decimalFormat(high_price),
-                    decimalFormat(low_price),
-                    decimalFormat(opening_price),
-                    decimalFormat(trade_price),
-                    //candle_date_time_kst foramt yyyy-MM-dd'T'HH:mm:ss
-                    candle_date_time_kst,
-                    decimalFormat(candle_acc_trade_volume, 3)
-                )
-                values.add(
-                    CandleEntry(
-                        (dataset.lastIndex - i + index).toFloat(),
-                        high_price.toFloat(),
-                        low_price.toFloat(),
-                        opening_price.toFloat(),
-                        trade_price.toFloat(),
-                        markerContent
-                    )
-                )
-            }
-        }
-        return values
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    @RequiresApi(Build.VERSION_CODES.O)
-    private suspend fun setBarChartData(candles: MutableList<Candles>){
+    private fun initBarChartSetting(){
         with(binding){
             bChart = barChart
         }
@@ -293,147 +486,7 @@ class BottomSheetFragment: BottomSheetDialogFragment() {
         l.formSize = 9f
         l.textSize = 11f
         l.xEntrySpace = 4f*/
-
-
-        val set1 = BarDataSet(getBarCandleEntry(candles), "")
-
-        /*set1.setDrawIcons(false)
-        val startColor1 = ContextCompat.getColor(this, android.R.color.holo_orange_light)
-        val startColor2 = ContextCompat.getColor(this, android.R.color.holo_blue_light)
-        val startColor3 = ContextCompat.getColor(this, android.R.color.holo_orange_light)
-        val startColor4 = ContextCompat.getColor(this, android.R.color.holo_green_light)
-        val startColor5 = ContextCompat.getColor(this, android.R.color.holo_red_light)
-        val endColor1 = ContextCompat.getColor(this, android.R.color.holo_blue_dark)
-        val endColor2 = ContextCompat.getColor(this, android.R.color.holo_purple)
-        val endColor3 = ContextCompat.getColor(this, android.R.color.holo_green_dark)
-        val endColor4 = ContextCompat.getColor(this, android.R.color.holo_red_dark)
-        val endColor5 = ContextCompat.getColor(this, android.R.color.holo_orange_dark)
-        val gradientFills: MutableList<Fill> = java.util.ArrayList<Fill>()
-        gradientFills.add(Fill(startColor1, endColor1))
-        gradientFills.add(Fill(startColor2, endColor2))
-        gradientFills.add(Fill(startColor3, endColor3))
-        gradientFills.add(Fill(startColor4, endColor4))
-        gradientFills.add(Fill(startColor5, endColor5))
-        set1.setFills(gradientFills)*/
-        set1.color = getColor(requireContext(), android.R.color.holo_orange_dark)
-        val dataSets = ArrayList<IBarDataSet>()
-        dataSets.add(set1)
-        val data = BarData(dataSets)
-        //data.setValueTextSize(10f)
-        data.setDrawValues(false)
-        data.barWidth = 0.9f
-        bChart.data = data
-        bChart.legend.isEnabled = false
-        CoroutineScope(Dispatchers.Main).launch{
-            //bChart.setBackgroundColor(Color.WHITE)
-
-            bChart.invalidate()
-        }
     }
-
-    @SuppressLint("SimpleDateFormat")
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun getBarCandleEntry(dataset: List<Candles>, isPreRemove: Boolean = true): ArrayList<BarEntry> {
-        val values = ArrayList<BarEntry>()
-
-        val index: Int = bChart.data?.let {
-            if(isPreRemove) it.entryCount else it.entryCount - 1
-        } ?: 0
-        /*val index: Int = chart.data?.apply {
-            if(isRemove) this.dataSets[0].removeEntry(this.entryCount - 1)
-        }?.let {
-            it.entryCount - 1
-        } ?: 0*/
-
-        for (i in dataset.lastIndex downTo 0 ) {
-            with(dataset[i]){
-                values.add(
-                    BarEntry(
-                        (dataset.lastIndex - i + index).toFloat(),
-                        candle_acc_trade_volume.toFloat()
-                    )
-                )
-            }
-        }
-        return values
-    }
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    private fun setBottomSheetHeight(heightRate: Int) {
-        val bottomSheet = dialog!!.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-        val behavior = BottomSheetBehavior.from(bottomSheet)
-        val layoutParams = bottomSheet.layoutParams
-        /*if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
-            val windowManager = requireContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            val windowMetrics = windowManager.defaultDisplay
-            requireContext().display!!.height
-        } else {
-
-            val layoutParams = bottomSheet.layoutParams
-            val displayMetrics = DisplayMetrics()
-            (requireContext() as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
-            layoutParams.height = displayMetrics.heightPixels * heightRate / 100
-            bottomSheet.layoutParams = layoutParams
-        }*/
-        layoutParams.height = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val windowMetrics = requireActivity().windowManager.currentWindowMetrics
-            val insets: Insets = windowMetrics.windowInsets
-                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-            (windowMetrics.bounds.height() - insets.top - insets.bottom) * heightRate / 100
-        } else {
-            val displayMetrics = DisplayMetrics()
-            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-            displayMetrics.heightPixels * heightRate / 100
-        }
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private suspend fun startMinuteCandleAPI(market: String){
-        while(flag){
-            delay(5000L)
-            val values = ArrayList<Candles>()
-            if(!this::csChart.isInitialized || !this::bChart.isInitialized)
-                return
-            val marketUnit = binding.unitItems.text.toString()
-            val candleData = getCandles(market, marketUnit)
-            with(csChart.data.dataSets[0]){//차트테이터
-                val bThis = bChart.data.dataSets[0]
-                val index = this.entryCount - 1 //데이터 크기-1 -> 인덱스
-                val chartData = this.getEntryForIndex(index).data as MarkerContent //마커 데이터 클래스로 형변환
-                if(candleData[0].candle_date_time_kst == chartData.dateTime){//API 값 == 차트 데이터 날짜 -> 마지막 차트 데이터만 업데이트
-                    values.add(candleData[0])
-                    this.removeEntry(index)
-                    bThis.removeEntry(index)
-                    this.addEntry(getCandleEntry(values)[0])
-                    bThis.addEntry(getBarCandleEntry(values)[0])
-                } else if(candleData[0].candle_date_time_kst > chartData.dateTime) {//API 값 > 차트 데이터 날짜 -> 마지막 데이터 업데이트 후 API 최신데이터 추가
-                    //최신 데이터가 먼저 오기 때문에 차트에 데이터를 넣기 전 getCandleEntry에서 downTo로 리스트를 만듦
-                    //candleData[0]이 entries[1]이 된다
-                    values.add(candleData[0])
-                    values.add(candleData[1])
-                    this.removeEntry(index)
-                    bThis.removeEntry(index)
-                    val entries = getCandleEntry(values)
-                    val barEntries = getBarCandleEntry(values)
-                    this.addEntry(entries[0])
-                    this.addEntry(entries[1])
-                    bThis.addEntry(barEntries[0])
-                    bThis.addEntry(barEntries[1])
-                } else { }
-                values.clear()
-            }
-            csChart.data.notifyDataChanged()
-            csChart.notifyDataSetChanged()
-            bChart.data.notifyDataChanged()
-            bChart.notifyDataSetChanged()
-            CoroutineScope(Dispatchers.Main).launch {
-                csChart.invalidate()
-                bChart.invalidate()
-            }
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         flag = false

@@ -64,5 +64,7 @@
     <string name="shadowL">저가</string>
     <string name="close">종가</string>
     <string name="volumeTotal">거래량</string>
-
+    <!--+, - TextView 버튼-->
+    <string name="plus">+</string>
+    <string name="minus">-</string>
 </resources>
