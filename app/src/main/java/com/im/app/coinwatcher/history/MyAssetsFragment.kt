@@ -185,6 +185,22 @@ class MyAssetsFragment: Fragment() {
                     this.myProfitAndLoss.text = ""
                     this.myRateOfReturn.text = ""*/
             }
+            /*tradesSide.setTextColor(Color.parseColor("#C84A31"))
+            tradesSide.setTextColor(Color.parseColor("#1261C6"))*/
+            if(profitOrLoss > 0){
+                myProfitAndLoss.setTextColor(Color.parseColor("#C84A31"))
+            } else if(profitOrLoss < 0)
+                myProfitAndLoss.setTextColor(Color.parseColor("#1261C6"))
+            else
+                myProfitAndLoss.setTextColor(myProfitAndLoss.textColors.defaultColor)
+
+            if(rateOfReturn > 0){
+                myRateOfReturn.setTextColor(Color.parseColor("#C84A31"))
+            } else if(rateOfReturn < 0)
+                myRateOfReturn.setTextColor(Color.parseColor("#1261C6"))
+            else
+                myRateOfReturn.setTextColor(myRateOfReturn.textColors.defaultColor)
+
         }
 
         //그래프

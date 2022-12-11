@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.im.app.coinwatcher.common.*
+import com.im.app.coinwatcher.databinding.ActivitySplashBinding
 import com.im.app.coinwatcher.settings.KeySettingActivity
 import com.im.app.coinwatcher.sqlite.SQLiteManager
 import kotlinx.coroutines.CoroutineScope
@@ -22,6 +23,9 @@ class SplashActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+       ActivitySplashBinding.inflate(layoutInflater).also {
+           setContentView(it.root)
+       }
 
         val sharedPreferences = SharedPreferenceManager.getSettingsPreference(this@SplashActivity)
         val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){

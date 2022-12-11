@@ -30,11 +30,10 @@
         <item name="backgroundTint">@color/red</item>
         <item name="android:textColor">@color/itemTextColor</item>
     </style>
-    <style name="splashScreen" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/ic_launcher_background</item>
-    </style>
+    <!--<style name="splashScreen" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:gravity">center</item>
+    </style>-->
     <style name="settingDialog" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/ic_launcher_background</item>
         <item name="android:layout_centerInParent">true</item>
     </style>
     <style name="tab_textSize" parent="Widget.MaterialComponents.TabLayout">
