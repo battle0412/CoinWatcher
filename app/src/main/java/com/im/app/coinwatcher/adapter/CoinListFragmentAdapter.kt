@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.im.app.coinwatcher.BottomSheetFragment
 import com.im.app.coinwatcher.CoinListFragment
+import com.im.app.coinwatcher.common.SingleClickListener
 import com.im.app.coinwatcher.common.decimalFormat
 import com.im.app.coinwatcher.databinding.RecyclerCoinItemBinding
 import com.im.app.coinwatcher.json_data.MarketAll
@@ -56,11 +58,13 @@ class CoinListFragmentAdapter(private var marketList: MutableList<MarketTicker>
                     }
                     else -> {}
                 }
-                root.setOnClickListener {
-                    val bottomSheet =
-                        BottomSheetFragment.newInstance(marketList[position].market, marketKor)
-                    bottomSheet.show(owner.childFragmentManager, bottomSheet.tag)
-                }
+                root.setOnClickListener(object: SingleClickListener(){
+                    override fun onSingleClick(v: View?) {
+                        val bottomSheet =
+                            BottomSheetFragment.newInstance(marketList[position].market, marketKor)
+                        bottomSheet.show(owner.childFragmentManager, bottomSheet.tag)
+                    }
+                })
             }
 
         }

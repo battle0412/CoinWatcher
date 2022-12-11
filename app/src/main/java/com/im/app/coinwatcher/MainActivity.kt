@@ -2,11 +2,14 @@ package com.im.app.coinwatcher
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.im.app.coinwatcher.auto_trading.AutoTradingFragment
 import com.im.app.coinwatcher.common.IS_NIGHT
+import com.im.app.coinwatcher.common.SingleClickListener
 import com.im.app.coinwatcher.history.FundingHistoryFragment
 import com.im.app.coinwatcher.settings.SettingsFragment
 
@@ -28,6 +31,15 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(true)
+
+        findViewById<TextView>(R.id.gza_logo).setOnClickListener(object: SingleClickListener() {
+            override fun onSingleClick(v: View?) {
+                with(supportFragmentManager.beginTransaction()){
+                    replace(R.id.container, CoinListFragment.newInstance())
+                    commit()
+                }
+            }
+        })
 
         if(intent.extras != null){
             with(supportFragmentManager.beginTransaction()){

@@ -31,27 +31,30 @@ class SettingsFragment: Fragment() {
                 else
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
-            accessKeySave.setOnClickListener {
-                if(accesskeyED.text.toString().trim().isEmpty())
-                    toastMessage("ACCESS_KEY를 입력하세요")
-                else{
-                    sharedPreferences.edit().putString("ACCESS_KEY", accesskeyED.text.toString())
-                        .apply()
-                    ACCESS_KEY = accesskeyED.text.toString()
-                    toastMessage("저장 성공")
+            accessKeySave.setOnClickListener(object: SingleClickListener(){
+                override fun onSingleClick(v: View?) {
+                    if(accesskeyED.text.toString().trim().isEmpty())
+                        toastMessage("ACCESS_KEY를 입력하세요")
+                    else{
+                        sharedPreferences.edit().putString("ACCESS_KEY", accesskeyED.text.toString())
+                            .apply()
+                        ACCESS_KEY = accesskeyED.text.toString()
+                        toastMessage("저장 성공")
+                    }
                 }
-
-            }
-            secretKeySave.setOnClickListener {
-                if(secretkeyED.text.toString().trim().isEmpty())
-                    toastMessage("SECRET_KEY를 입력하세요")
-                else {
-                    sharedPreferences.edit().putString("SECRET_KEY", secretkeyED.text.toString())
-                        .apply()
-                    SECRET_KEY = secretkeyED.text.toString()
-                    toastMessage("저장 성공")
+            })
+            secretKeySave.setOnClickListener(object: SingleClickListener(){
+                override fun onSingleClick(v: View?) {
+                    if(secretkeyED.text.toString().trim().isEmpty())
+                        toastMessage("SECRET_KEY를 입력하세요")
+                    else {
+                        sharedPreferences.edit().putString("SECRET_KEY", secretkeyED.text.toString())
+                            .apply()
+                        SECRET_KEY = secretkeyED.text.toString()
+                        toastMessage("저장 성공")
+                    }
                 }
-            }
+            })
         }
         return binding.root
     }
