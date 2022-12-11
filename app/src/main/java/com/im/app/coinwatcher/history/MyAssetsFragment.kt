@@ -161,10 +161,10 @@ class MyAssetsFragment: Fragment() {
             }
             if(myBuy.toInt() == 0){
                 assetKrwTotal = assetKrw + profitOrLoss
-                this.myAssetKrw.text = decimalFormat(assetKrw, 0) //"0"
+                this.myAssetKrw.text = "0" //decimalFormat(assetKrw, 0) //"0"
                 this.myBuy.text = "0"
                 this.myEvaluation.text = ""
-                this.myAssetTotal.text = decimalFormat(assetKrwTotal, 0) //"0"
+                this.myAssetTotal.text = "0" //decimalFormat(assetKrwTotal, 0) //"0"
                 this.myProfitAndLoss.text = ""
                 this.myRateOfReturn.text = ""
             } else {
@@ -172,10 +172,10 @@ class MyAssetsFragment: Fragment() {
                 rateOfReturn = profitOrLoss / myBuy * 100
                 assetKrwTotal = assetKrw + profitOrLoss
 
-                    this.myAssetKrw.text = decimalFormat(round(assetKrw), 0)
+                    this.myAssetKrw.text = "0"//decimalFormat(round(assetKrw), 0)
                     this.myBuy.text = decimalFormat(round(myBuy), 0)
                     this.myEvaluation.text = decimalFormat(round(myEvaluation), 0)
-                    this.myAssetTotal.text = decimalFormat(round(assetKrwTotal), 0)
+                    this.myAssetTotal.text = "0"//decimalFormat(round(assetKrwTotal), 0)
                     this.myProfitAndLoss.text = decimalFormat(round(profitOrLoss), 0)
                     this.myRateOfReturn.text = decimalFormat(rateOfReturn, 2) + "%"
                     /*this.myAssetKrw.text = "0"//decimalFormat(assetKrw, 0)

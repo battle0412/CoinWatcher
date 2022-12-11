@@ -21,6 +21,8 @@ import com.im.app.coinwatcher.model.factory.UpbitViewModelFactory
 import com.im.app.coinwatcher.okhttp_retrofit.RetrofitOkHttpManagerUpbit
 import com.im.app.coinwatcher.repository.UpbitRepository
 import kotlinx.android.synthetic.main.fragment_auto_buying.*
+import kotlinx.android.synthetic.main.fragment_auto_trading.*
+import kotlinx.android.synthetic.main.fragment_my_assets.*
 import kotlinx.coroutines.*
 
 class AutoTradingFragment: Fragment() {
@@ -133,7 +135,8 @@ class AutoTradingFragment: Fragment() {
                     accounts.forEach {
                         when (it.currency) {
                             "KRW" -> {
-                                myAssetTV.setText(decimalFormat(it.balance.toFloat()))
+                                //myAssetTV.setText(decimalFormat(it.balance.toFloat()))
+                                myAssetTV.setText("0")
                                 myLockedTV.setText(decimalFormat(it.locked.toFloat()))
                             }
                             marketItem.split("-")[1] ->
@@ -171,12 +174,16 @@ class AutoTradingFragment: Fragment() {
 
     private fun checkCondition(): Boolean{
         val sharedPreferences = SharedPreferenceManager.getAutoTradingPreference(requireContext())
-
         val buyPrice = sharedPreferences.getString("buyPrice", "") ?: ""
         val volume = sharedPreferences.getString("volume", "") ?: ""
-        val conditionCheck = (buyPrice.isNotEmpty() && buyPrice.toFloat() < 5000F)
-                || (volume.isNotEmpty() && volume.toFloat() > 0F)
-                || (buyPrice.isEmpty() && volume.isEmpty())
+        val conditionCheck = (buyPrice.isNotEmpty() &&
+                    (buyPrice.toFloat() < 5000F
+                    || buyPrice.toFloat() > my_assetTV.text.toString().toFloat())
+                ) //매수금액이 비어있지 않고 5천보다 작거나 보유자산보다 크면 true
+                || (volume.isNotEmpty()
+                    && (volume.toFloat() > volumeTV.text.toString().toFloat())
+                ) //매도량이 비어있지 않고 보유량보다 크면 true
+                || (buyPrice.isEmpty() && volume.isEmpty()) //매매 금액이 비어있다면 true
         if(conditionCheck){
             return false
         }
