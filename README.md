@@ -18,10 +18,10 @@ GZA는 소소한 용돈벌이 업비트 자동매매 어플입니다.
 # 사용 방법
 ### 키셋팅
 > 첫 실행시 Open API KEY 입력  
-<img src="https://user-images.githubusercontent.com/45412843/206974334-dc71d1bf-1d48-4b1d-af61-113030674080.jpg" width="200"/> 
+> <img src="https://user-images.githubusercontent.com/45412843/206974334-dc71d1bf-1d48-4b1d-af61-113030674080.jpg" width="200"/>
 ### 메인화면  
 > 업비트 원화 상장코인 5초마다 상태 업데이트  
-<img src="https://user-images.githubusercontent.com/45412843/206977053-8b439a63-1d46-4360-80e1-17611c6cf490.gif" width="200"/>
+> <img src="https://user-images.githubusercontent.com/45412843/206977053-8b439a63-1d46-4360-80e1-17611c6cf490.gif" width="200"/>  
 > 초성검색
 
 # 사용기술
