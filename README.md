@@ -29,7 +29,7 @@ GZA는 소소한 용돈벌이 업비트 자동매매 어플입니다.
 > 업비트 원화 상장코인 5초마다 상태 업데이트  
 > <img src="https://user-images.githubusercontent.com/45412843/206977053-8b439a63-1d46-4360-80e1-17611c6cf490.gif" width="200"/>  
 > 초성 또는 심볼 검색  
-> <img src="https://user-images.githubusercontent.com/45412843/207007726-1470d7a7-0af7-4402-a38e-a0daf8541834.gif" width="200"/><img src="https://user-images.githubusercontent.com/45412843/207006639-a2971318-466c-4ecc-8e55-b43ab909e301.gif" width="200"/>  
+> <img src="https://user-images.githubusercontent.com/45412843/207007726-1470d7a7-0af7-4402-a38e-a0daf8541834.gif" width="200"/> <img src="https://user-images.githubusercontent.com/45412843/207006639-a2971318-466c-4ecc-8e55-b43ab909e301.gif" width="200"/>  
 > 캔들차트 및 거래량 차트 확인  
 > <img src="https://user-images.githubusercontent.com/45412843/207006631-d68080ab-b1c7-4f05-bd51-4aa208ceae8e.gif" width="200"/>  
 </details>
