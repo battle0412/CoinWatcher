@@ -16,13 +16,29 @@ GZA는 소소한 용돈벌이 업비트 자동매매 어플입니다.
 ![image](https://user-images.githubusercontent.com/45412843/206963144-d117df2b-58f0-4003-9598-a7eb59601e8b.png)
 
 # 사용 방법
-### 키셋팅
+<details>
+<summary>키셋팅</summary>
+
 > 첫 실행시 Open API KEY 입력  
-> <img src="https://user-images.githubusercontent.com/45412843/206974334-dc71d1bf-1d48-4b1d-af61-113030674080.jpg" width="200"/>
-### 메인화면  
+> <img src="https://user-images.githubusercontent.com/45412843/206974334-dc71d1bf-1d48-4b1d-af61-113030674080.jpg" width="200"/>  
+</details>
+
+<details>
+<summary>거래소</summary>
+  
 > 업비트 원화 상장코인 5초마다 상태 업데이트  
 > <img src="https://user-images.githubusercontent.com/45412843/206977053-8b439a63-1d46-4360-80e1-17611c6cf490.gif" width="200"/>  
-> 초성검색
+> 초성 또는 심볼 검색  
+> <img src="https://user-images.githubusercontent.com/45412843/207007726-1470d7a7-0af7-4402-a38e-a0daf8541834.gif" width="200"/><img src="https://user-images.githubusercontent.com/45412843/207006639-a2971318-466c-4ecc-8e55-b43ab909e301.gif" width="200"/>  
+> 캔들차트 및 거래량 차트 확인  
+> <img src="https://user-images.githubusercontent.com/45412843/207006631-d68080ab-b1c7-4f05-bd51-4aa208ceae8e.gif" width="200"/>  
+</details>
+
+<details>
+<summary>자동매매</summary>
+  
+> 현재 지표 확인 및 매매 조건 설정 후 자동매매
+</details>
 
 # 사용기술
 ![image](https://img.shields.io/badge/Android_Studio-Dolphin-3DDC84?style=flat&logo=android-studio&logoColor=white)
