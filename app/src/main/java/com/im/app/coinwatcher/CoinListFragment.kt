@@ -53,45 +53,19 @@ class CoinListFragment: Fragment() {
 
         with(binding.searchCoin){
             this.doAfterTextChanged {
+                filteredKwrMap.clear()
                 if(this.text.toString().trim().isNotEmpty()){
                     kwrMap.forEach{
-                        if(SoundSearcher.matchString("""${it.value.korean_name}${it.value.english_name}""", this.text.toString().trim()))
+                        if(SoundSearcher.matchString("""${it.value.market.split("-")[1]}${it.value.korean_name}${it.value.english_name}""", this.text.toString().trim()))
                             filteredKwrMap[it.key] = it.value
-                        /*else if(SoundSearcher.matchString(it.value.english_name, binding.searchCoin.text.toString())){
-                            filteredKwrMap[it.key] = it.value
-                        }*/
                     }
-                    requestMarketTicker(filteredKwrMap)
-                    //recyclerViewUpdate()
+                    recyclerViewUpdate()
                 }
             }
         }
         viewModel.marketTicker.observe(viewLifecycleOwner){
-            with(binding.marketRV){
-                val orderedMarketTicker = it.sortedByDescending {
-                        MarketTicker -> MarketTicker.acc_trade_price_24h
-                } as MutableList<MarketTicker>
-
-                if(adapter == null){
-                    val manager = LinearLayoutManager(activity as Activity, LinearLayoutManager.VERTICAL, false)
-                    val deco = MarketItemDecoration(requireContext(), 5, 8, 5, 8)
-                    addItemDecoration(deco)
-                    layoutManager = manager
-                    adapter = CoinListFragmentAdapter(orderedMarketTicker, kwrMap, this@CoinListFragment)
-                }
-                else{
-                    val recyclerViewState = layoutManager!!.onSaveInstanceState()
-                    adapter = if(binding.searchCoin.text!!.isNotEmpty()){
-                        val tmpList = orderedMarketTicker.filter {
-                            SoundSearcher.matchString(marketMapping(it.market), binding.searchCoin.text.toString())
-                        }.toMutableList()
-
-                        CoinListFragmentAdapter(tmpList, kwrMap, this@CoinListFragment)
-                    } else
-                        CoinListFragmentAdapter(orderedMarketTicker, kwrMap, this@CoinListFragment)
-                    layoutManager!!.onRestoreInstanceState(recyclerViewState)
-                }
-            }
+            marketList = it
+            recyclerViewUpdate()
         }
         return binding.root
     }
@@ -137,32 +111,36 @@ class CoinListFragment: Fragment() {
             }
     }
 
-    private fun marketMapping(market: String): String{
+    /*private fun marketMapping(market: String): String{
         return filteredKwrMap[market]?.let {
            """${it.korean_name}${it.english_name}"""
         } ?: ""
-    }
+    }*/
 
     private fun recyclerViewUpdate(){
         CoroutineScope(Dispatchers.Main).launch {
             with(binding.marketRV){
+                val orderedMarketTicker = marketList.sortedByDescending {
+                        MarketTicker -> MarketTicker.acc_trade_price_24h
+                } as MutableList<MarketTicker>
                 if(adapter == null){
                     val manager = LinearLayoutManager(activity as Activity, LinearLayoutManager.VERTICAL, false)
                     val deco = MarketItemDecoration(requireContext(), 5, 8, 5, 8)
                     addItemDecoration(deco)
                     layoutManager = manager
-                    adapter = CoinListFragmentAdapter(marketList, kwrMap, this@CoinListFragment)
+                    adapter = CoinListFragmentAdapter(orderedMarketTicker, kwrMap, this@CoinListFragment)
                 }
                 else{
                     val recyclerViewState = layoutManager!!.onSaveInstanceState()
                     adapter = if(binding.searchCoin.text!!.isNotEmpty()){
-                        val tmpList = marketList.filter {
-                            SoundSearcher.matchString(marketMapping(it.market), binding.searchCoin.text.toString())
+                        val tmpList = orderedMarketTicker.filter {
+                            filteredKwrMap[it.market]?.let { true } ?: false
+                            //SoundSearcher.matchString(marketMapping(it.market), binding.searchCoin.text.toString())
                         }.toMutableList()
 
                         CoinListFragmentAdapter(tmpList, kwrMap, this@CoinListFragment)
                     } else
-                        CoinListFragmentAdapter(marketList, kwrMap, this@CoinListFragment)
+                        CoinListFragmentAdapter(orderedMarketTicker, kwrMap, this@CoinListFragment)
 
 
                     layoutManager!!.onRestoreInstanceState(recyclerViewState)

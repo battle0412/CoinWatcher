@@ -67,7 +67,7 @@ class AutoTradingService: Service() {
             )
         }
         val builder: NotificationCompat.Builder = NotificationCompat.Builder(this, CHANNEL_ID)
-        builder.setSmallIcon(R.mipmap.ic_launcher)
+        builder.setSmallIcon(R.drawable.logo_white_size)
             .setContentTitle("자동매매")
             .setContentText("자동매매 서비스 실행중")
             .setContentIntent(pIntent)
@@ -94,7 +94,7 @@ class AutoTradingService: Service() {
                 /*CoroutineScope(Dispatchers.Main).launch {
                     toastMessage("포어그라운드 서비스 가동중")
                 }*/
-                val candles = getCandles(market, unit)
+                val candles = getCandles(market, unit, 200)
                 val rsi = calculateRSI(candles)
                 val stochasticFastSlow = stochasticFastSlow(candles)
                 //빈값이면 통과

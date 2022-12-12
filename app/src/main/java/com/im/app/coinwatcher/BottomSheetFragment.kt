@@ -304,7 +304,7 @@ class BottomSheetFragment: BottomSheetDialogFragment() {
                 it.getString("bottomSheetMarket") ?: ""
             } ?: ""
             val marketUnit = binding.unitItems.text.toString()
-            val candles = getCandles(market, marketUnit)
+            val candles = getCandles(market, marketUnit, 2)
             val values = ArrayList<Candles>()
             if(!this::csChart.isInitialized
                 || !this::bChart.isInitialized

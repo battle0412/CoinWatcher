@@ -96,20 +96,18 @@ class AutoSellingFragment: Fragment() {
         }
     }*/
    private fun addCalculateClickEvent(eventTextView: TextView, editText: EditText, calcType: String){
-       eventTextView.setOnClickListener(object: SingleClickListener(){
-           override fun onSingleClick(v: View?) {
-               var curValue =
-                   if(editText.text.toString().trim().isEmpty())
-                       0F
-                   else
-                       editText.text.toString().toFloat()
-               when(calcType){
-                   "+" -> if(curValue + 1 < 100F) curValue += 1 else curValue = 100F
-                   "-" -> if(curValue - 1 > 0F) curValue -= 1 else curValue = 0F
-               }
-               editText.setText((round(curValue * 100) / 100).toString())
+       eventTextView.setOnClickListener {
+           var curValue =
+               if(editText.text.toString().trim().isEmpty())
+                   0F
+               else
+                   editText.text.toString().toFloat()
+           when(calcType){
+               "+" -> if(curValue + 1 < 100F) curValue += 1 else curValue = 100F
+               "-" -> if(curValue - 1 > 0F) curValue -= 1 else curValue = 0F
            }
-       })
+           editText.setText((round(curValue * 100) / 100).toString())
+       }
    }
     companion object{
         fun newInstance() = AutoSellingFragment()

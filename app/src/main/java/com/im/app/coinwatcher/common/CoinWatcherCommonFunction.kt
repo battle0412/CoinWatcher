@@ -391,17 +391,17 @@ fun numberFormat(input: String): String{
 }
 
 @RequiresApi(Build.VERSION_CODES.N)
-suspend fun getCandles(marketItem: String, unitItem: String): MutableList<Candles>{
+suspend fun getCandles(marketItem: String, unitItem: String, count: Int): MutableList<Candles>{
     val rest = RetrofitOkHttpManagerUpbit().restService
 
     val resultList = withContext(Dispatchers.IO){
         if (unitItem == "일" || unitItem == "주" || unitItem == "월")
-            rest.requestCandles(unitMapping(unitItem), marketItem, 2).body()!!
+            rest.requestCandles(unitMapping(unitItem), marketItem, count).body()!!
         else
             rest.requestMinuteCandles(
                 unitMapping(unitItem).toInt(),
                 marketItem,
-                2
+                count
             ).body()!!
     }
     return resultList

@@ -136,7 +136,7 @@ class AutoTradingFragment: Fragment() {
                         when (it.currency) {
                             "KRW" -> {
                                 //myAssetTV.setText(decimalFormat(it.balance.toFloat()))
-                                myAssetTV.setText("0")
+                                myAssetTV.setText("10000")
                                 myLockedTV.setText(decimalFormat(it.locked.toFloat()))
                             }
                             marketItem.split("-")[1] ->
