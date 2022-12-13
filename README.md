@@ -7,6 +7,9 @@ GZA는 Android Studio와 Kotlin기반 소소한 용돈벌이 업비트 자동매
 회사업무 중 계속 가격을 확인 NO  
 내가 설정한 지표와 가격으로 매매를 해주는 프로그램  
 
+# 구성도
+![구성도](https://user-images.githubusercontent.com/45412843/207294400-8fbb473a-c7df-4f04-98b7-3999f4af23cb.png)
+
 # 사전작업
 1. 업비트 로그인(PC화면)
 2. 고객센터
