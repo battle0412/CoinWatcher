@@ -38,6 +38,11 @@ GZA는 소소한 용돈벌이 업비트 자동매매 어플입니다.
 <summary>자동매매</summary>
 
 > 현재 지표 확인 및 매매 조건 설정 후 자동매매  
+> > * **빈 값인 경우 해당 조건은 무시**
+> > * 매수  
+> > * 현재 지표 및 가격이 설정한 값보다 낮은 경우  
+> > * 매도
+> > * 현재 지표 및 가격이 설정한 값보다 높은 경우
 > <img src="https://user-images.githubusercontent.com/45412843/207233301-026febe8-b0fc-4034-a91d-783887a7d46d.gif" width="200"/>  
 </details>
 
@@ -46,6 +51,14 @@ GZA는 소소한 용돈벌이 업비트 자동매매 어플입니다.
 
 > 보유자산 및 거래내역 확인  
 > <img src="https://user-images.githubusercontent.com/45412843/207233104-86d5c3eb-4691-4289-99ff-44806e41a928.gif" width="200"/>   
+</details>
+
+<details>
+<summary>설정</summary>
+
+> 주간/야간 모드 설정 및 키 변경  
+> <img src="https://user-images.githubusercontent.com/45412843/207262200-27556f38-e6d5-4c08-8d74-00d3f87c46d9.jpg" width="200"/> 
+> <img src="https://user-images.githubusercontent.com/45412843/207262202-25b207c5-a942-4fdf-8f58-f6412caf1fd2.jpg" width="200"/>  
 </details>
 
 # 사용기술
