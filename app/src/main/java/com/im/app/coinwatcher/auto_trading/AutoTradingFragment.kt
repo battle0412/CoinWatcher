@@ -1,5 +1,7 @@
 package com.im.app.coinwatcher.auto_trading
 
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -8,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.im.app.coinwatcher.R
@@ -24,6 +27,7 @@ import kotlinx.android.synthetic.main.fragment_auto_buying.*
 import kotlinx.android.synthetic.main.fragment_auto_trading.*
 import kotlinx.android.synthetic.main.fragment_my_assets.*
 import kotlinx.coroutines.*
+
 
 class AutoTradingFragment: Fragment() {
     private lateinit var binding: FragmentAutoTradingBinding
@@ -56,7 +60,10 @@ class AutoTradingFragment: Fragment() {
             }
         }
         with(binding){
-            autoTradingSwitching.isChecked = arguments?.getBoolean("autoTrading") ?: false
+            //백그라운드 서비스 실행 유무 확인
+            autoTradingSwitching.isChecked =
+                arguments?.getBoolean("autoTrading") ?: false
+                        || isMyServiceRunning(AutoTradingService::class.java)
             setTextEditEnabled(!autoTradingSwitching.isChecked)
             val sharedPreferences = SharedPreferenceManager.getAutoTradingPreference(requireContext())
             autoTradingSwitching.setOnCheckedChangeListener { _, isChecked ->
@@ -256,6 +263,17 @@ class AutoTradingFragment: Fragment() {
         }
     }
 
+    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = requireContext().getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+        manager?.let {
+            for (service in it.getRunningServices(Int.MAX_VALUE)) {
+                if (serviceClass.name == service.service.className) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
     companion object{
         fun newInstance() = AutoTradingFragment()
         fun newInstance(intent: Intent): AutoTradingFragment {

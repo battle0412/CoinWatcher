@@ -91,9 +91,9 @@ class AutoTradingService: Service() {
         val volume = intent.getStringExtra("volume") ?: ""
         CoroutineScope(Dispatchers.IO).launch {
             while(flag){
-                /*CoroutineScope(Dispatchers.Main).launch {
-                    toastMessage("포어그라운드 서비스 가동중")
-                }*/
+                CoroutineScope(Dispatchers.Main).launch {
+                    toastMessage("자동매매 시작")
+                }
                 val candles = getCandles(market, unit, 200)
                 val rsi = calculateRSI(candles)
                 val stochasticFastSlow = stochasticFastSlow(candles)
@@ -110,25 +110,14 @@ class AutoTradingService: Service() {
                         volume.isNotEmpty()
 
                 if(isBuy && buyFlag){
-                    /*val map = mutableMapOf<String, String>()
+                    val map = mutableMapOf<String, String>()
                     map["market"] = market
                     map["side"] = "bid" //매수
                     map["volume"] = ""
                     map["price"] = buyPrice
                     map["ord_type"] = "price" //시장가
                     //map["identifier"] = ""
-                    val requestBody = Gson().toJson(map).toString()
-                        .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-                    val rest = RetrofitOkHttpManagerUpbit(generateJWT(map)).restService
-                    val responseOrders = responseSyncUpbitAPI(rest.requestOrders(requestBody))
-                    val orders = getGsonData(responseOrders, Orders::class.java)*/
-                    val map = mutableMapOf<String, String>()
-                    map["uuid"] = "ccc6b35f-ead3-42e3-a93a-fa64ac7d4eae"
-                    insertTradingHD()
-                    val rest2 = RetrofitOkHttpManagerUpbit(map).restService
-                    val responseOrder = responseSyncUpbitAPI(rest2.requestOrder("ccc6b35f-ead3-42e3-a93a-fa64ac7d4eae"))
-                    val order = getGsonData(responseOrder, Order::class.java)
-                    insertTradingDT(order)
+                    requestTrading(map)
                     buyFlag = false
                 }
 
@@ -138,18 +127,9 @@ class AutoTradingService: Service() {
                     map["side"] = "ask" //매도
                     map["volume"] = volume
                     map["price"] = ""
-                    map["ord_type"] = "price" //시장가
-                    map["identifier"] = ""
-                    val requestBody = Gson().toJson(map).toString()
-                        .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-                    val rest = RetrofitOkHttpManagerUpbit(map).restService
-                    val responseOrders = responseSyncUpbitAPI(rest.requestOrders(requestBody))
-                    val orders = getGsonData(responseOrders, Orders::class.java)
-                    insertTradingHD()
-                    val rest2 = RetrofitOkHttpManagerUpbit().restService
-                    val responseOrder = responseSyncUpbitAPI(rest2.requestOrder(orders.uuid))
-                    val order = getGsonData(responseOrder, Order::class.java)
-                    insertTradingDT(order)
+                    map["ord_type"] = "market" //시장가
+                    //map["identifier"] = ""
+                    requestTrading(map)
                     sellFlag = false
                 }
                 
@@ -168,7 +148,23 @@ class AutoTradingService: Service() {
         }
     }
 
-    private fun insertTradingHD() {
+    @RequiresApi(Build.VERSION_CODES.N)
+    private suspend fun requestTrading(map: MutableMap<String, String>){
+        val requestBody = Gson().toJson(map).toString()
+            .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        val rest = RetrofitOkHttpManagerUpbit(map).restService
+        val responseOrders = responseSyncUpbitAPI(rest.requestOrders(requestBody))
+        val orders = getGsonData(responseOrders, Orders::class.java)
+        val uuidMap = mutableMapOf<String, String>()
+        uuidMap["uuid"] = orders.uuid
+        insertTradingHD(orders)
+        val rest2 = RetrofitOkHttpManagerUpbit(uuidMap).restService
+        val responseOrder = responseSyncUpbitAPI(rest2.requestOrder(uuidMap["uuid"]!!))
+        val order = getGsonData(responseOrder, Order::class.java)
+        insertTradingDT(order)
+    }
+
+    private fun insertTradingHD(orders: Orders) {
         /*
         {
         "uuid":"af9b007a-678e-4a71-95fe-58afb16a51f9"
@@ -203,7 +199,7 @@ class AutoTradingService: Service() {
         */
         val cv = ContentValues()
         with(cv){
-            put("uuid", "ccc6b35f-ead3-42e3-a93a-fa64ac7d4eae")
+            /*put("uuid", "ccc6b35f-ead3-42e3-a93a-fa64ac7d4eae")
             put("side", "bid")
             put("ord_type", "price")
             put("price", "5000")
@@ -217,8 +213,8 @@ class AutoTradingService: Service() {
             put("paid_fee", "0")
             put("locked", "5002.5")
             put("executed_volume", "0")
-            put("trades_count", 0)
-            /*put("uuid", orders.uuid)
+            put("trades_count", 0)*/
+            put("uuid", orders.uuid)
             put("side", orders.side)
             put("ord_type", orders.ord_type)
             put("price", orders.price)
@@ -232,7 +228,7 @@ class AutoTradingService: Service() {
             put("paid_fee", orders.paid_fee)
             put("locked", orders.locked)
             put("executed_volume", orders.executed_volume)
-            put("trades_count", orders.trades_count)*/
+            put("trades_count", orders.trades_count)
         }
         dbInstance.insertTrading(openOrCreateDatabase(DATABASE_NAME, Context.MODE_PRIVATE, null), cv, TABLE_TRADING_HD)
     }
