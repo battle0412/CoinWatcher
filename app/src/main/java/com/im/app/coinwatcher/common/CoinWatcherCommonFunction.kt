@@ -1,6 +1,7 @@
 package com.im.app.coinwatcher.common
 
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
@@ -8,6 +9,7 @@ import com.google.gson.reflect.TypeToken
 import com.im.app.coinwatcher.JWT.GeneratorJWT
 import com.im.app.coinwatcher.json_data.Candles
 import com.im.app.coinwatcher.okhttp_retrofit.RetrofitOkHttpManagerUpbit
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
@@ -136,6 +138,10 @@ fun decimalFormat(input: Number, numberOfDecimalPlace: Int): String {
         2 -> DecimalFormat("#,##0.00")
         3 -> DecimalFormat("#,##0.000")
         4 -> DecimalFormat("#,##0.0000")
+        5 -> DecimalFormat("#,##0.00000")
+        6 -> DecimalFormat("#,##0.000000")
+        7 -> DecimalFormat("#,##0.0000000")
+        8 -> DecimalFormat("#,##0.00000000")
         else -> DecimalFormat("#,##0")
     }
     return dFormat.format(input)

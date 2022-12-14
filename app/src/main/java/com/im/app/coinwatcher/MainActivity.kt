@@ -13,12 +13,6 @@ import com.im.app.coinwatcher.common.SingleClickListener
 import com.im.app.coinwatcher.history.FundingHistoryFragment
 import com.im.app.coinwatcher.settings.SettingsFragment
 
-
-/**
- * 파일이름 예쁘게 Fragment_Member_Insert
- * text를 코드에 하드 코딩 x
- * common에 preference 추가 singleton으로
- */
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +25,7 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(true)
+        supportActionBar?.title = ""
 
         findViewById<TextView>(R.id.gza_logo).setOnClickListener(object: SingleClickListener() {
             override fun onSingleClick(v: View?) {

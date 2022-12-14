@@ -147,7 +147,7 @@ class AutoTradingFragment: Fragment() {
                                 myLockedTV.setText(decimalFormat(it.locked.toFloat()))
                             }
                             marketItem.split("-")[1] ->
-                                volumeTV.setText(decimalFormat(it.balance.toFloat(), false))
+                                volumeTV.setText(decimalFormat(it.balance.toFloat(), 8))
                         }
                     }
                     /*priceTV.setText("123,456")

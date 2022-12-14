@@ -9,7 +9,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/logo_blue_size"
-        android:label=""
+        android:label="GZA"
         android:roundIcon="@drawable/logo_blue_size"
         android:supportsRtl="true"
         android:theme="@style/Theme.CoinWatcher"

@@ -271,4 +271,14 @@ data class TradeOrder(
     var trades_trend: String = ""
 )
 
+data class OnError(
+    var error: ErrorContent
+)
+
+data class ErrorContent(
+    var name: String = "",
+    var message: String = ""
+)
+
+
 

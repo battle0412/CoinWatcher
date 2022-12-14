@@ -24,7 +24,7 @@ class UpbitViewModel(private val repository: UpbitRepository): ViewModel() {
     val errorMessage = MutableLiveData<String>()
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        onError("marketList 예외: ${throwable.localizedMessage}" )
+        onError("예외: ${throwable.localizedMessage}" )
     }
 
     /*fun getAllMarketsFromViewModel(){

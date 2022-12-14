@@ -8,7 +8,10 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.google.gson.Gson
@@ -17,6 +20,7 @@ import com.im.app.coinwatcher.R
 import com.im.app.coinwatcher.common.*
 import com.im.app.coinwatcher.json_data.Order
 import com.im.app.coinwatcher.json_data.Orders
+import com.im.app.coinwatcher.json_data.OnError
 import com.im.app.coinwatcher.okhttp_retrofit.RetrofitOkHttpManagerUpbit
 import com.im.app.coinwatcher.sqlite.SQLiteManager
 import kotlinx.coroutines.CoroutineScope
@@ -117,8 +121,8 @@ class AutoTradingService: Service() {
                     map["price"] = buyPrice
                     map["ord_type"] = "price" //시장가
                     //map["identifier"] = ""
-                    requestTrading(map)
-                    buyFlag = false
+                    buyFlag = !requestTrading(map)
+
                 }
 
                 if(isSell && sellFlag){
@@ -129,8 +133,8 @@ class AutoTradingService: Service() {
                     map["price"] = ""
                     map["ord_type"] = "market" //시장가
                     //map["identifier"] = ""
-                    requestTrading(map)
-                    sellFlag = false
+
+                    sellFlag = !requestTrading(map)
                 }
                 
                 delay(10000 *   //10초 단위
@@ -149,19 +153,33 @@ class AutoTradingService: Service() {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private suspend fun requestTrading(map: MutableMap<String, String>){
+    private suspend fun requestTrading(map: MutableMap<String, String>): Boolean{
         val requestBody = Gson().toJson(map).toString()
             .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        val rest = RetrofitOkHttpManagerUpbit(map).restService
-        val responseOrders = responseSyncUpbitAPI(rest.requestOrders(requestBody))
-        val orders = getGsonData(responseOrders, Orders::class.java)
-        val uuidMap = mutableMapOf<String, String>()
-        uuidMap["uuid"] = orders.uuid
-        insertTradingHD(orders)
-        val rest2 = RetrofitOkHttpManagerUpbit(uuidMap).restService
-        val responseOrder = responseSyncUpbitAPI(rest2.requestOrder(uuidMap["uuid"]!!))
-        val order = getGsonData(responseOrder, Order::class.java)
-        insertTradingDT(order)
+        try {
+            val rest = RetrofitOkHttpManagerUpbit(map).restService
+            val responseOrders = responseSyncUpbitAPI(rest.requestOrders(requestBody))
+            if(responseOrders.contains("error")){
+                val error = getGsonData(responseOrders, OnError::class.java)
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed({
+                    toastMessage(error.error.message)
+                }, 1000L)
+                return false
+            }
+            val orders = getGsonData(responseOrders, Orders::class.java)
+            val uuidMap = mutableMapOf<String, String>()
+            uuidMap["uuid"] = orders.uuid
+            insertTradingHD(orders)
+            val rest2 = RetrofitOkHttpManagerUpbit(uuidMap).restService
+            val responseOrder = responseSyncUpbitAPI(rest2.requestOrder(uuidMap["uuid"]!!))
+            val order = getGsonData(responseOrder, Order::class.java)
+            insertTradingDT(order)
+        } catch (e: Exception){
+            Log.e("UpbitAPI", e.message?.toString() ?: "")
+            return false
+        }
+        return true
     }
 
     private fun insertTradingHD(orders: Orders) {
