@@ -50,7 +50,7 @@
     <string name="remain">내 가용자산</string>
     <string name="more">이상</string>
     <string name="less">이하</string>
-    <string name="buyPrice">매수금액</string>
+    <string name="buyPrice">매수</string>
     <string name="created_at">체결시간</string>
     <string name="market">코인명</string>
     <string name="side">종류</string>

@@ -17,6 +17,7 @@ import com.im.app.coinwatcher.adapter.MarketItemDecoration
 import com.im.app.coinwatcher.common.SoundSearcher
 import com.im.app.coinwatcher.common.getGsonList
 import com.im.app.coinwatcher.common.responseSyncUpbitAPI
+import com.im.app.coinwatcher.common.toastMessage
 import com.im.app.coinwatcher.databinding.FragmentCoinListBinding
 import com.im.app.coinwatcher.json_data.MarketAll
 import com.im.app.coinwatcher.json_data.MarketTicker
@@ -30,7 +31,6 @@ import kotlin.collections.HashMap
 
 
 class CoinListFragment: Fragment() {
-
     private lateinit var binding: FragmentCoinListBinding
     private lateinit var marketList: MutableList<MarketTicker>
     private var kwrMap = HashMap<String, MarketAll>()
@@ -56,16 +56,25 @@ class CoinListFragment: Fragment() {
                 filteredKwrMap.clear()
                 if(this.text.toString().trim().isNotEmpty()){
                     kwrMap.forEach{
-                        if(SoundSearcher.matchString("""${it.value.market.split("-")[1]}${it.value.korean_name}${it.value.english_name}""", this.text.toString().trim()))
+                        if(SoundSearcher.matchString(
+                                """${it.value.market.split("-")[1]}${it.value.korean_name}${it.value.english_name}"""
+                                , this.text.toString().trim()))
                             filteredKwrMap[it.key] = it.value
                     }
                     recyclerViewUpdate()
                 }
             }
         }
-        viewModel.marketTicker.observe(viewLifecycleOwner){
-            marketList = it
-            recyclerViewUpdate()
+        with(viewModel){
+            marketTicker.observe(viewLifecycleOwner){
+                this@CoinListFragment.marketList = it
+                recyclerViewUpdate()
+            }
+            errorMessage.observe(viewLifecycleOwner){
+                CoroutineScope(Dispatchers.Main).launch {
+                    toastMessage(it.toString())
+                }
+            }
         }
         return binding.root
     }

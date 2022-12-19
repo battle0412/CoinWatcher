@@ -98,4 +98,12 @@
     <style name="customMarker" parent="Widget.AppCompat.TextView">
         <item name="android:background">@drawable/rounded_black_rect</item>
     </style>
+    <!--매매%-->
+    <style name="autoTradingSpinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:background">@drawable/thin_border_rect</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textCursorDrawable">?android:attr/textColorPrimary</item>
+        <item name="android:layout_marginTop">1dp</item>
+        <item name="android:layout_marginBottom">1dp</item>
+    </style>
 </resources>

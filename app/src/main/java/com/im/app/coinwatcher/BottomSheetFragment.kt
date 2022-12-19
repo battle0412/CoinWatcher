@@ -98,15 +98,23 @@ class BottomSheetFragment: BottomSheetDialogFragment() {
                     startMinuteCandleAPI(market)
                 }*/
             }
-            viewModel.candles.observe(viewLifecycleOwner){
-                CoroutineScope(Dispatchers.IO).launch {
-                    flag = false
-                    setCandleChartData(it)
-                    setBarChartData(it)
-                    flag = true
-                    startMinuteCandleAPI()
+            with(viewModel){
+                candles.observe(viewLifecycleOwner){
+                    CoroutineScope(Dispatchers.IO).launch {
+                        flag = false
+                        setCandleChartData(it)
+                        setBarChartData(it)
+                        flag = true
+                        startMinuteCandleAPI()
+                    }
+                }
+                errorMessage.observe(viewLifecycleOwner){
+                    CoroutineScope(Dispatchers.Main).launch {
+                        toastMessage(it.toString())
+                    }
                 }
             }
+
             /*viewModel.minuteCandles.observe(viewLifecycleOwner){
                 CoroutineScope(Dispatchers.IO).launch {
                     flag = false

@@ -164,19 +164,25 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
+                android:layout_weight="2.5"
                 style="@style/autoTradingEditTextRight"
                 android:text="@string/buyPrice"/>
             <EditText
                 android:id="@+id/buyPrice"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="6"
+                android:layout_weight="4.5"
                 android:inputType="numberDecimal"
                 android:maxLength="10"
                 android:textAlignment="textEnd"
                 style="@style/autoTradingEditTextLeft"
                 android:maxLines="1" />
+            <Spinner
+                android:id="@+id/buyPricePer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                style="@style/autoTradingSpinner"
+                android:layout_weight="3"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -129,7 +129,7 @@ fun decimalFormat(input: Number, isPercent: Boolean = false): String {
 }
 /**
  * input: 변환할 숫자
- * numberOfDecimalPlace: 소수점 자리수 최대 4
+ * numberOfDecimalPlace: 소수점 자리수 최대 8
  */
 fun decimalFormat(input: Number, numberOfDecimalPlace: Int): String {
     val dFormat = when(numberOfDecimalPlace){
@@ -342,15 +342,15 @@ fun stochasticFastSlow(minuteCandles: MutableList<Candles>): MutableList<Double>
         for(j in 0 until STOCHASTIC_N){
             //종가가 아닌 최고가 최저가 사용해야함
             if(currentPrice == 0.0)
-                currentPrice = minuteCandles[i + j].trade_price;
+                currentPrice = minuteCandles[i + j].trade_price
             if(maxPrice == 0.0)
-                maxPrice = minuteCandles[i + j].high_price;
+                maxPrice = minuteCandles[i + j].high_price
             if(minPrice == 0.0)
-                minPrice = minuteCandles[i + j].low_price;
+                minPrice = minuteCandles[i + j].low_price
             if(maxPrice < minuteCandles[i + j].high_price)
-                maxPrice = minuteCandles[i + j].high_price;
+                maxPrice = minuteCandles[i + j].high_price
             if(minPrice > minuteCandles[i + j].low_price)
-                minPrice = minuteCandles[i + j].low_price;
+                minPrice = minuteCandles[i + j].low_price
         }
         fastkList.add((currentPrice - minPrice) / (maxPrice - minPrice) * 100)
     }

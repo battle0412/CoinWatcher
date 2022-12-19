@@ -45,13 +45,21 @@ class AutoTradingFragment: Fragment() {
                 UpbitRepository(RetrofitOkHttpManagerUpbit().restService)
             )
         )[UpbitViewModel::class.java]
-        viewModel.accounts.observe(viewLifecycleOwner){
-            setMyAsset(it)
+        with(viewModel){
+            accounts.observe(viewLifecycleOwner){
+                setMyAsset(it)
+            }
+            candles.observe(viewLifecycleOwner){
+                setTradingIndicator(it)
+                viewModel.getAccountsFromViewModel()
+            }
+            errorMessage.observe(viewLifecycleOwner){
+                CoroutineScope(Dispatchers.Main).launch{
+                    toastMessage(it.toString())
+                }
+            }
         }
-        viewModel.candles.observe(viewLifecycleOwner){
-            setTradingIndicator(it)
-            viewModel.getAccountsFromViewModel()
-        }
+
         initSpinner()
         if(savedInstanceState == null){
             with(childFragmentManager.beginTransaction()){
@@ -142,31 +150,14 @@ class AutoTradingFragment: Fragment() {
                     accounts.forEach {
                         when (it.currency) {
                             "KRW" -> {
-                                //myAssetTV.setText(decimalFormat(it.balance.toFloat()))
-                                myAssetTV.setText("10000")
+                                myAssetTV.setText(decimalFormat(it.balance.toFloat()))
+                                //myAssetTV.setText("10000")
                                 myLockedTV.setText(decimalFormat(it.locked.toFloat()))
                             }
                             marketItem.split("-")[1] ->
                                 volumeTV.setText(decimalFormat(it.balance.toFloat(), 8))
                         }
                     }
-                    /*priceTV.setText("123,456")
-                    rsiTV.setText(decimalFormat(rsi, 2))
-                    stochasticSlowKTV.setText(decimalFormat(stochasticList[0]))
-                    stochasticSlowDTV.setText(decimalFormat(stochasticList[1]))*/
-
-                    /*accounts.forEach {
-                        when (it.currency) {
-                            "KRW" -> {
-                                *//*myAssetTV.setText("1,000.0")
-                                myLockedTV.setText("10,000")*//*
-                                myAssetTV.setText(decimalFormat(it.balance.toFloat(), 0))
-                                myLockedTV.setText(decimalFormat(it.locked.toFloat(), 0))
-                            }
-                            marketItem.split("-")[1] ->
-                                volumeTV.setText(decimalFormat(it.balance.toFloat(), false))
-                        }
-                    }*/
                 }
             }
         }
@@ -184,8 +175,8 @@ class AutoTradingFragment: Fragment() {
         val buyPrice = sharedPreferences.getString("buyPrice", "") ?: ""
         val volume = sharedPreferences.getString("volume", "") ?: ""
         val conditionCheck = (buyPrice.isNotEmpty() &&
-                    (buyPrice.toFloat() < 5000F
-                    || buyPrice.toFloat() > my_assetTV.text.toString().toFloat())
+                    (buyPrice.toFloat() < 5000F //업비트 최소 매매금액 5천원 수수로 0.05% -> 0.0005
+                    || buyPrice.toFloat() > my_assetTV.text.toString().replace(",", "").toFloat() * 0.9994)
                 ) //매수금액이 비어있지 않고 5천보다 작거나 보유자산보다 크면 true
                 || (volume.isNotEmpty()
                     && (volume.toFloat() > volumeTV.text.toString().toFloat())
@@ -253,6 +244,9 @@ class AutoTradingFragment: Fragment() {
                 )
                 val sharedPreferences = SharedPreferenceManager.getAutoTradingPreference(requireContext())
                 withContext(Dispatchers.Main) {
+                    myAssetTV.setText("0")
+                    myLockedTV.setText("0")
+                    volumeTV.setText("0")
                     marketItems.setText(sharedPreferences.getString("market", "KRW-BTC"))
                     unitItems.setText(sharedPreferences.getString("unit", "1분"))
                     marketItems.setAdapter(adapter)

@@ -21,6 +21,7 @@ import com.github.mikephil.charting.utils.ColorTemplate
 import com.im.app.coinwatcher.R
 import com.im.app.coinwatcher.common.IS_NIGHT
 import com.im.app.coinwatcher.common.decimalFormat
+import com.im.app.coinwatcher.common.toastMessage
 import com.im.app.coinwatcher.databinding.FragmentMyAssetsBinding
 import com.im.app.coinwatcher.json_data.Accounts
 import com.im.app.coinwatcher.json_data.MarketTicker
@@ -55,16 +56,25 @@ class MyAssetsFragment: Fragment() {
                 UpbitRepository(RetrofitOkHttpManagerUpbit().restService)
             )
         )[UpbitViewModel::class.java]
-        viewModel.accounts.observe(viewLifecycleOwner){
-            accountList = it
-            val marketList = mutableListOf<String>()
-            accountList.forEach {account -> if(account.currency != "KRW") marketList.add("KRW-" + account.currency)  }
-            viewModel.getMarketTickerFromViewModel(marketList.joinToString(","))
+
+        with(viewModel){
+            accounts.observe(viewLifecycleOwner){
+                accountList = it
+                val marketList = mutableListOf<String>()
+                accountList.forEach {account -> if(account.currency != "KRW") marketList.add("KRW-" + account.currency)  }
+                viewModel.getMarketTickerFromViewModel(marketList.joinToString(","))
+            }
+            marketTicker.observe(viewLifecycleOwner){
+                it.forEach { MarketTicker -> this@MyAssetsFragment.marketTicker[MarketTicker.market] = MarketTicker }
+                initMyAssets()
+            }
+            errorMessage.observe(viewLifecycleOwner){
+                CoroutineScope(Dispatchers.Main).launch {
+                    toastMessage(it.toString())
+                }
+            }
         }
-        viewModel.marketTicker.observe(viewLifecycleOwner){
-            it.forEach { MarketTicker -> marketTicker[MarketTicker.market] = MarketTicker }
-            initMyAssets()
-        }
+
         color = if(IS_NIGHT)
             this.resources.getColor(R.color.itemTextColor)
         else
@@ -161,10 +171,10 @@ class MyAssetsFragment: Fragment() {
             }
             if(myBuy.toInt() == 0){
                 assetKrwTotal = assetKrw + profitOrLoss
-                this.myAssetKrw.text = "0" //decimalFormat(assetKrw, 0) //"0"
+                this.myAssetKrw.text = decimalFormat(assetKrw, 0) //"0"
                 this.myBuy.text = "0"
                 this.myEvaluation.text = ""
-                this.myAssetTotal.text = "0" //decimalFormat(assetKrwTotal, 0) //"0"
+                this.myAssetTotal.text = decimalFormat(assetKrwTotal, 0) //"0"
                 this.myProfitAndLoss.text = ""
                 this.myRateOfReturn.text = ""
             } else {
@@ -172,10 +182,10 @@ class MyAssetsFragment: Fragment() {
                 rateOfReturn = profitOrLoss / myBuy * 100
                 assetKrwTotal = assetKrw + profitOrLoss
 
-                    this.myAssetKrw.text = "0"//decimalFormat(round(assetKrw), 0)
+                    this.myAssetKrw.text = decimalFormat(round(assetKrw), 0)
                     this.myBuy.text = decimalFormat(round(myBuy), 0)
                     this.myEvaluation.text = decimalFormat(round(myEvaluation), 0)
-                    this.myAssetTotal.text = "0"//decimalFormat(round(assetKrwTotal), 0)
+                    this.myAssetTotal.text = decimalFormat(round(assetKrwTotal), 0)
                     this.myProfitAndLoss.text = decimalFormat(round(profitOrLoss), 0)
                     this.myRateOfReturn.text = decimalFormat(rateOfReturn, 2) + "%"
                     /*this.myAssetKrw.text = "0"//decimalFormat(assetKrw, 0)
@@ -209,7 +219,7 @@ class MyAssetsFragment: Fragment() {
             entries.add(
                 PieEntry(
                     when(it.currency){
-                        "KRW" -> it.balance.toFloat()
+                        "KRW" -> (it.balance.toFloat() + it.locked.toFloat())
                         else -> (it.balance.toFloat() * it.avg_buy_price.toFloat())
                     },
                     it.currency
