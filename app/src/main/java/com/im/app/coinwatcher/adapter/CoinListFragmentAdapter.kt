@@ -2,14 +2,20 @@ package com.im.app.coinwatcher.adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.graphics.Point
 import android.os.Build
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.im.app.coinwatcher.BottomSheetFragment
 import com.im.app.coinwatcher.CoinListFragment
+import com.im.app.coinwatcher.R
 import com.im.app.coinwatcher.common.SingleClickListener
 import com.im.app.coinwatcher.common.decimalFormat
 import com.im.app.coinwatcher.databinding.RecyclerCoinItemBinding
@@ -36,7 +42,7 @@ class CoinListFragmentAdapter(private var marketList: MutableList<MarketTicker>
      * coinList의 index value
      */
     @RequiresApi(Build.VERSION_CODES.N)
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
     override fun onBindViewHolder(holder: CoinListViewHolder, position: Int) {
         with(holder.binding){
             with(marketList[position]){

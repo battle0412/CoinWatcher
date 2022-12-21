@@ -6,6 +6,7 @@
     android:id="@+id/bottom_sheet_chart"
     android:orientation="vertical"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    android:tag="bottomSheetFragment"
     android:layout_gravity="bottom">
     <LinearLayout
         android:id="@+id/chartHeader"
@@ -17,10 +18,16 @@
         android:gravity="center"
         android:paddingTop="5dp"
         android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/watchMarket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:src="@drawable/star_empty"/>
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="6">
+            android:layout_weight="5.5">
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/marketName"
                 android:layout_width="match_parent"

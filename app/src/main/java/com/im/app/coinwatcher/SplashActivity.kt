@@ -36,10 +36,8 @@ class SplashActivity: AppCompatActivity() {
                 SECRET_KEY = sharedPreferences.getString("SECRET_KEY", "").toString()
                 val mainIntent = Intent(this@SplashActivity, MainActivity::class.java)
                 startActivity(mainIntent)
-                finish()
-            } else {
-                finish()
             }
+            finish()
         }
 
         //없으면 DB인스턴스 생성 후 테이블 생성

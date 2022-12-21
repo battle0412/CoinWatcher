@@ -52,4 +52,16 @@ class FundingHistoryFragment: Fragment() {
     companion object{
         fun newInstance() = FundingHistoryFragment()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        with(requireActivity().supportFragmentManager){
+            val fm = this.findFragmentById(R.id.historyTabContent)
+            fm?.let {
+                this.beginTransaction()
+                    .remove(it)
+                    .commit()
+            }
+        }
+    }
 }

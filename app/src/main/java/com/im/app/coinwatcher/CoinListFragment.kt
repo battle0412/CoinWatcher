@@ -2,6 +2,7 @@ package com.im.app.coinwatcher
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,10 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.im.app.coinwatcher.adapter.CoinListFragmentAdapter
 import com.im.app.coinwatcher.adapter.MarketItemDecoration
-import com.im.app.coinwatcher.common.SoundSearcher
-import com.im.app.coinwatcher.common.getGsonList
-import com.im.app.coinwatcher.common.responseSyncUpbitAPI
-import com.im.app.coinwatcher.common.toastMessage
+import com.im.app.coinwatcher.common.*
 import com.im.app.coinwatcher.databinding.FragmentCoinListBinding
 import com.im.app.coinwatcher.json_data.MarketAll
 import com.im.app.coinwatcher.json_data.MarketTicker
@@ -32,11 +30,12 @@ import kotlin.collections.HashMap
 
 class CoinListFragment: Fragment() {
     private lateinit var binding: FragmentCoinListBinding
-    private lateinit var marketList: MutableList<MarketTicker>
+    private var marketList = mutableListOf<MarketTicker>()
     private var kwrMap = HashMap<String, MarketAll>()
     private var filteredKwrMap = HashMap<String, MarketAll>()
     private var flag = true
     private lateinit var viewModel: UpbitViewModel
+    private var marketType = "KRW"
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
@@ -50,30 +49,41 @@ class CoinListFragment: Fragment() {
                 UpbitRepository(RetrofitOkHttpManagerUpbit().restService)
             )
         )[UpbitViewModel::class.java]
-
-        with(binding.searchCoin){
-            this.doAfterTextChanged {
-                filteredKwrMap.clear()
-                if(this.text.toString().trim().isNotEmpty()){
-                    kwrMap.forEach{
-                        if(SoundSearcher.matchString(
-                                """${it.value.market.split("-")[1]}${it.value.korean_name}${it.value.english_name}"""
-                                , this.text.toString().trim()))
-                            filteredKwrMap[it.key] = it.value
-                    }
-                    recyclerViewUpdate()
-                }
-            }
-        }
         with(viewModel){
             marketTicker.observe(viewLifecycleOwner){
                 this@CoinListFragment.marketList = it
                 recyclerViewUpdate()
             }
+            marketList.observe(viewLifecycleOwner){
+                it.filter { marketAll -> marketAll.market.contains("KRW") }//마켓 목록중 원화만 취급
+                    .forEach{ marketAll ->
+                        kwrMap[marketAll.market] = marketAll
+                    }
+            }
             errorMessage.observe(viewLifecycleOwner){
                 CoroutineScope(Dispatchers.Main).launch {
-                    toastMessage(it.toString())
+                    toastMessage(it.error.message)
                 }
+            }
+        }
+        with(binding){
+            this.kwrList.setOnClickListener {
+                if(marketType == "KRW")
+                    return@setOnClickListener
+                this.kwrList.typeface = Typeface.DEFAULT_BOLD
+                this.watchList.typeface = Typeface.DEFAULT
+                marketType = "KRW"
+
+                recyclerViewUpdate()
+            }
+            this.watchList.setOnClickListener {
+                if(marketType == "관심")
+                    return@setOnClickListener
+                this.watchList.typeface = Typeface.DEFAULT_BOLD
+                this.kwrList.typeface = Typeface.DEFAULT
+                marketType = "관심"
+
+                recyclerViewUpdate()
             }
         }
         return binding.root
@@ -84,12 +94,31 @@ class CoinListFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         CoroutineScope(Dispatchers.IO).launch {
             initMarketList()
+            delay(1000L)
             while(flag){
                 if(binding.searchCoin.text!!.isNotEmpty())
                     requestMarketTicker(filteredKwrMap)
                 else
                     requestMarketTicker(kwrMap)
                 delay(5000L)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        with(binding.searchCoin){
+            this.doAfterTextChanged {
+                filteredKwrMap.clear()
+                if(this.text.toString().trim().isNotEmpty()){
+                    kwrMap.forEach{
+                        if(SoundSearcher.matchString(
+                                """${it.value.market.split("-")[1]}${it.value.korean_name}${it.value.english_name}"""
+                                , this.text.toString().trim()))
+                            filteredKwrMap[it.key] = it.value
+                    }
+                }
+                recyclerViewUpdate()
             }
         }
     }
@@ -102,36 +131,45 @@ class CoinListFragment: Fragment() {
         val kwrMarketStr = tmpList.joinToString(
             separator = ","
         )
-        //val rest = RetrofitOkHttpManagerUpbit(GeneratorJWT.generateJWT()).restService
-        viewModel.getMarketTickerFromViewModel(kwrMarketStr)
-    /*    marketList = getGsonList(responseBody, MarketTicker::class.java)
-            .sortedByDescending { MarketTicker -> MarketTicker.acc_trade_price_24h } as MutableList<MarketTicker>*/
-        //recyclerViewUpdate()
+        if(kwrMarketStr.isNotEmpty())
+            viewModel.getMarketTickerFromViewModel(kwrMarketStr)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private suspend fun initMarketList(){
-        val rest = RetrofitOkHttpManagerUpbit().restService
+    private fun initMarketList(){
+        viewModel.getAllMarketsFromViewModel()
+        binding.kwrList.typeface = Typeface.DEFAULT_BOLD
+        /*val rest = RetrofitOkHttpManagerUpbit().restService
         val responseStr = responseSyncUpbitAPI(rest.requestMarketAll())
         getGsonList(responseStr, MarketAll::class.java)
             .filter { marketAll -> marketAll.market.contains("KRW") }//마켓 목록중 원화만 취급
             .forEach{
                 kwrMap[it.market] = it
-            }
+            }*/
     }
 
-    /*private fun marketMapping(market: String): String{
-        return filteredKwrMap[market]?.let {
-           """${it.korean_name}${it.english_name}"""
-        } ?: ""
-    }*/
-
-    private fun recyclerViewUpdate(){
+    fun recyclerViewUpdate(){
         CoroutineScope(Dispatchers.Main).launch {
             with(binding.marketRV){
-                val orderedMarketTicker = marketList.sortedByDescending {
+                val watchList = SharedPreferenceManager.getWatchListPreference(requireContext())
+                    .getStringSet("WatchList", mutableSetOf())
+
+                var orderedMarketTicker = if(marketType == "관심"){
+                    marketList.filter { watchList!!.contains(it.market) }.sortedByDescending {
+                            MarketTicker -> MarketTicker.acc_trade_price_24h
+                    }
+                } else {
+                    marketList.sortedByDescending {
+                            MarketTicker -> MarketTicker.acc_trade_price_24h
+                    }
+                }
+                orderedMarketTicker = if(orderedMarketTicker.isNotEmpty())
+                        orderedMarketTicker as MutableList<MarketTicker>
+                    else
+                        mutableListOf()
+                /*val orderedMarketTicker = marketList.sortedByDescending {
                         MarketTicker -> MarketTicker.acc_trade_price_24h
-                } as MutableList<MarketTicker>
+                } as MutableList<MarketTicker>*/
                 if(adapter == null){
                     val manager = LinearLayoutManager(activity as Activity, LinearLayoutManager.VERTICAL, false)
                     val deco = MarketItemDecoration(requireContext(), 5, 8, 5, 8)
@@ -151,12 +189,12 @@ class CoinListFragment: Fragment() {
                     } else
                         CoinListFragmentAdapter(orderedMarketTicker, kwrMap, this@CoinListFragment)
 
-
                     layoutManager!!.onRestoreInstanceState(recyclerViewState)
                 }
             }
         }
     }
+
 
     companion object{
         fun newInstance() = CoinListFragment()

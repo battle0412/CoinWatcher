@@ -19,6 +19,11 @@ class KeySettingActivity: AppCompatActivity() {
         with(binding){
             saveButton.setOnClickListener(object: SingleClickListener(){
                 override fun onSingleClick(v: View?) {
+                    if(binding.secretkeyED.text.toString().trim().isEmpty() ||
+                            binding.accesskeyED.text.toString().trim().isEmpty()){
+                        toastMessage("키를 입력하세요")
+                        return
+                    }
                     val sharedPreference = getSharedPreferences("GZASettings", Context.MODE_PRIVATE)
                     with(sharedPreference.edit()){
                         IS_NIGHT = false
@@ -60,6 +65,7 @@ class KeySettingActivity: AppCompatActivity() {
             })
         }
     }
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         super.onBackPressed()
         setResult(RESULT_CANCELED)

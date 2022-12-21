@@ -33,6 +33,7 @@ class AutoTradingFragment: Fragment() {
     private lateinit var binding: FragmentAutoTradingBinding
     private lateinit var viewModel: UpbitViewModel
     private var flag = true
+    private var kwrArray = arrayListOf<String>()
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,9 +54,15 @@ class AutoTradingFragment: Fragment() {
                 setTradingIndicator(it)
                 viewModel.getAccountsFromViewModel()
             }
+            marketList.observe(viewLifecycleOwner){
+                it.filter { marketAll -> marketAll.market.contains("KRW") }//마켓 목록중 원화만 취급
+                    .forEach { kwr ->
+                        kwrArray.add(kwr.market)
+                    }
+            }
             errorMessage.observe(viewLifecycleOwner){
                 CoroutineScope(Dispatchers.Main).launch{
-                    toastMessage(it.toString())
+                    toastMessage(it.error.message)
                 }
             }
         }
@@ -224,14 +231,15 @@ class AutoTradingFragment: Fragment() {
     private fun initSpinner(){
         CoroutineScope(Dispatchers.IO).launch {
             with(binding){
-                val rest = RetrofitOkHttpManagerUpbit().restService
+                /*val rest = RetrofitOkHttpManagerUpbit().restService
                 val responseStr = responseSyncUpbitAPI(rest.requestMarketAll())
                 val kwrArray = ArrayList<String>()
                 getGsonList(responseStr, MarketAll::class.java)
                     .filter { marketAll -> marketAll.market.contains("KRW") }//마켓 목록중 원화만 취급
                     .forEach {
                         kwrArray.add(it.market)
-                    }
+                    }*/
+                viewModel.getAllMarketsFromViewModel()
                 val adapter = ArrayAdapter(
                     requireContext(),
                     androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,

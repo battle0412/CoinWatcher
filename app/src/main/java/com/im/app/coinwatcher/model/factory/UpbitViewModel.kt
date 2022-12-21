@@ -1,13 +1,13 @@
 package com.im.app.coinwatcher.model.factory
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.im.app.coinwatcher.json_data.Accounts
-import com.im.app.coinwatcher.json_data.Candles
-import com.im.app.coinwatcher.json_data.MarketAll
-import com.im.app.coinwatcher.json_data.MarketTicker
+import com.im.app.coinwatcher.common.getGsonData
+import com.im.app.coinwatcher.json_data.*
 import com.im.app.coinwatcher.repository.UpbitRepository
 import kotlinx.coroutines.*
+import okhttp3.RequestBody
 
 class UpbitViewModel(private val repository: UpbitRepository): ViewModel() {
     //업비트에서 제공중인 시장 정보
@@ -20,14 +20,14 @@ class UpbitViewModel(private val repository: UpbitRepository): ViewModel() {
     val candles = MutableLiveData<MutableList<Candles>>()
     //보유자산
     val accounts = MutableLiveData<MutableList<Accounts>>()
-
-    val errorMessage = MutableLiveData<String>()
+    //에러
+    val errorMessage = MutableLiveData<OnError>()
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        onError("예외: ${throwable.localizedMessage}" )
+        Log.e("exceptionHandler: ","예외: ${throwable.localizedMessage}" )
     }
 
-    /*fun getAllMarketsFromViewModel(){
+    fun getAllMarketsFromViewModel(){
         CoroutineScope(Dispatchers.IO).launch(exceptionHandler) {
             val response = repository.getAllMarkets()
             withContext(Dispatchers.Main){
@@ -35,10 +35,10 @@ class UpbitViewModel(private val repository: UpbitRepository): ViewModel() {
                     marketList.postValue(response.body())
                 }
                 else
-                    onError("onError: ${response.errorBody()!!.string()}")
+                    errorMessage.postValue(onError(response.errorBody()!!.string()))
             }
         }
-    }*/
+    }
     fun getMarketTickerFromViewModel(markets: String){
         CoroutineScope(Dispatchers.IO).launch(exceptionHandler) {
             val response = repository.getMarketTicker(markets)
@@ -47,7 +47,7 @@ class UpbitViewModel(private val repository: UpbitRepository): ViewModel() {
                     marketTicker.postValue(response.body())
                 }
                 else
-                    onError("onError: ${response.errorBody()!!.string()}")
+                    errorMessage.postValue(onError(response.errorBody()!!.string()))
             }
         }
     }
@@ -73,7 +73,7 @@ class UpbitViewModel(private val repository: UpbitRepository): ViewModel() {
                     candles.postValue(response.body())
                 }
                 else
-                    onError("onError: ${response.errorBody()!!.string()}")
+                    errorMessage.postValue(onError(response.errorBody()!!.string()))
             }
         }
     }
@@ -86,13 +86,13 @@ class UpbitViewModel(private val repository: UpbitRepository): ViewModel() {
                     accounts.postValue(response.body())
                 }
                 else
-                    onError("onError: ${response.errorBody()!!.string()}")
+                    errorMessage.postValue(onError(response.errorBody()!!.string()))
             }
         }
     }
 
-    private fun onError(message: String){
-        errorMessage.value = message
+    private fun onError(message: String): OnError{
+        return getGsonData(message, OnError::class.java)
     }
 
     override fun onCleared() {

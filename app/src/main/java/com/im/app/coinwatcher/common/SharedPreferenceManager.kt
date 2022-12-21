@@ -13,4 +13,8 @@ object SharedPreferenceManager {
         sharedPreference = context.getSharedPreferences("GZAutoTrading", Context.MODE_PRIVATE)
         return sharedPreference
     }
+    fun getWatchListPreference(context: Context): SharedPreferences{
+        sharedPreference = context.getSharedPreferences("GZAWatchList", Context.MODE_PRIVATE)
+        return sharedPreference
+    }
 }

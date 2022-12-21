@@ -70,7 +70,7 @@ class MyAssetsFragment: Fragment() {
             }
             errorMessage.observe(viewLifecycleOwner){
                 CoroutineScope(Dispatchers.Main).launch {
-                    toastMessage(it.toString())
+                    toastMessage(it.error.message)
                 }
             }
         }

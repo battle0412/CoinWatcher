@@ -57,7 +57,7 @@ class AutoSellingFragment: Fragment() {
         )[UpbitViewModel::class.java]
         val sharedPreferences = SharedPreferenceManager.getAutoTradingPreference(requireContext())
         viewModel.accounts.observe(viewLifecycleOwner){
-            val market = sharedPreferences.getString("market", "")
+            val market = sharedPreferences.getString("market", "KRW-BTC")
             it.forEach { accounts -> if(accounts.currency == market!!.split("-")[1]) myVolume += accounts.balance.toFloat() }
         }
         viewModel.getAccountsFromViewModel()

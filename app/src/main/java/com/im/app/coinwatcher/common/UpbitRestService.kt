@@ -73,7 +73,7 @@ interface UpbitRestService {
     업비트에서 거래 가능한 마켓 목록
      */
     @GET("v1/market/all")
-    fun requestMarketAll(): Call<ResponseBody>
+    suspend fun requestMarketAll(): Response<MutableList<MarketAll>>
 
     /*
     markets 반점으로 구분되는 마켓 코드 (ex. KRW-BTC, BTC-ETH)

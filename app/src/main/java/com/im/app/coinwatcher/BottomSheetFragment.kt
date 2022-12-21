@@ -56,75 +56,10 @@ class BottomSheetFragment: BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentBottomSheetBinding.inflate(inflater, container, false)
-
         initCandleChartSetting()
         initBarChartSetting()
-
-        viewModel = ViewModelProvider(
-            this, UpbitViewModelFactory(
-                UpbitRepository(RetrofitOkHttpManagerUpbit().restService)
-            )
-        )[UpbitViewModel::class.java]
-
-        with(binding){
-            val market = arguments?.let {
-                it.getString("bottomSheetMarket") ?: ""
-            } ?: ""
-            val marketNm = arguments?.let {
-                it.getString("bottomSheetMarketName") ?: ""
-            } ?: ""
-            marketName.text = "$marketNm($market)"
-            val adapter = ArrayAdapter(
-                requireContext(),
-                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
-                getUnits()
-            )
-            val sharedPreferences = SharedPreferenceManager.getSettingsPreference(requireContext())
-            unitItems.setText(sharedPreferences.getString("chartUnit", "5분"))
-            unitItems.setAdapter(adapter)
-
-            unitItems.setOnItemClickListener { _, _, _, _ ->
-                val unitText = unitItems.text.toString()
-                sharedPreferences.edit().putString("chartUnit",unitText ).apply()
-                csChart.data?.clearValues()
-                bChart.data?.clearValues()
-                requestCandleToViewModel()
-                /*CoroutineScope(Dispatchers.IO).launch {
-                    val candles = getCandles(market,unitText)
-                    flag = false
-                    setCandleChartData(candles)
-                    setBarChartData(candles)
-                    flag = true
-                    startMinuteCandleAPI(market)
-                }*/
-            }
-            with(viewModel){
-                candles.observe(viewLifecycleOwner){
-                    CoroutineScope(Dispatchers.IO).launch {
-                        flag = false
-                        setCandleChartData(it)
-                        setBarChartData(it)
-                        flag = true
-                        startMinuteCandleAPI()
-                    }
-                }
-                errorMessage.observe(viewLifecycleOwner){
-                    CoroutineScope(Dispatchers.Main).launch {
-                        toastMessage(it.toString())
-                    }
-                }
-            }
-
-            /*viewModel.minuteCandles.observe(viewLifecycleOwner){
-                CoroutineScope(Dispatchers.IO).launch {
-                    flag = false
-                    setCandleChartData(it)
-                    setBarChartData(it)
-                    flag = true
-                    startMinuteCandleAPI()
-                }
-            }*/
-        }
+        initViewModel()
+        initBinding()
         return binding.root
     }
 
@@ -495,6 +430,92 @@ class BottomSheetFragment: BottomSheetDialogFragment() {
         l.textSize = 11f
         l.xEntrySpace = 4f*/
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun initViewModel(){
+        viewModel = ViewModelProvider(
+            this, UpbitViewModelFactory(
+                UpbitRepository(RetrofitOkHttpManagerUpbit().restService)
+            )
+        )[UpbitViewModel::class.java]
+        with(viewModel){
+            candles.observe(viewLifecycleOwner){
+                CoroutineScope(Dispatchers.IO).launch {
+                    flag = false
+                    setCandleChartData(it)
+                    setBarChartData(it)
+                    flag = true
+                    startMinuteCandleAPI()
+                }
+            }
+            errorMessage.observe(viewLifecycleOwner){
+                CoroutineScope(Dispatchers.Main).launch {
+                    toastMessage(it.error.message)
+                }
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n", "CommitPrefEdits", "MutatingSharedPrefs")
+    private fun initBinding(){
+        with(binding){
+            val market = arguments?.let {
+                it.getString("bottomSheetMarket") ?: ""
+            } ?: ""
+            val marketNm = arguments?.let {
+                it.getString("bottomSheetMarketName") ?: ""
+            } ?: ""
+            marketName.text = "$marketNm($market)"
+
+            val adapter = ArrayAdapter(
+                requireContext(),
+                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                getUnits()
+            )
+            val sharedPreferences = SharedPreferenceManager.getSettingsPreference(requireContext())
+            unitItems.setText(sharedPreferences.getString("chartUnit", "5분"))
+            unitItems.setAdapter(adapter)
+
+            unitItems.setOnItemClickListener { _, _, _, _ ->
+                val unitText = unitItems.text.toString()
+                sharedPreferences.edit().putString("chartUnit",unitText ).apply()
+                csChart.data?.clearValues()
+                bChart.data?.clearValues()
+                requestCandleToViewModel()
+            }
+            val sharedWatchList = SharedPreferenceManager.getWatchListPreference(requireContext())
+            val watchMarketValue = sharedWatchList.getStringSet("WatchList", hashSetOf()) ?: hashSetOf()
+            if(watchMarketValue.contains(market)){
+                watchMarket.setImageResource(R.drawable.star_32)
+                watchMarket.tag = "star_32"
+            }
+            else{
+                watchMarket.setImageResource(R.drawable.star_empty)
+                watchMarket.tag = "star_empty"
+            }
+            watchMarket.setOnClickListener {
+                val newSet = HashSet<String>(watchMarketValue)
+                when(watchMarket.tag){
+                    "star_empty" -> {
+                        watchMarket.setImageResource(R.drawable.star_32)
+                        watchMarket.tag = "star_32"
+                        newSet.add(market)
+                        sharedWatchList.edit().putStringSet("WatchList", newSet).apply()
+                    }
+                    "star_32" -> {
+                        watchMarket.setImageResource(R.drawable.star_empty)
+                        watchMarket.tag = "star_empty"
+                        newSet.remove(market)
+                        sharedWatchList.edit().putStringSet("WatchList", newSet).apply()
+                    }
+                }
+                (requireActivity().supportFragmentManager
+                    .findFragmentById(R.id.container) as CoinListFragment)
+                    .recyclerViewUpdate()
+            }
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         flag = false

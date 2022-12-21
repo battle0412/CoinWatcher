@@ -21,7 +21,9 @@ import com.im.app.coinwatcher.common.*
 import com.im.app.coinwatcher.json_data.Order
 import com.im.app.coinwatcher.json_data.Orders
 import com.im.app.coinwatcher.json_data.OnError
+import com.im.app.coinwatcher.model.factory.UpbitViewModel
 import com.im.app.coinwatcher.okhttp_retrofit.RetrofitOkHttpManagerUpbit
+import com.im.app.coinwatcher.repository.UpbitRepository
 import com.im.app.coinwatcher.sqlite.SQLiteManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +42,6 @@ class AutoTradingService: Service() {
     override fun onCreate() {
         super.onCreate()
         createNotification()
-
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -154,9 +155,9 @@ class AutoTradingService: Service() {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private suspend fun requestTrading(map: MutableMap<String, String>): Boolean{
-        val requestBody = Gson().toJson(map).toString()
-            .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         try {
+            val requestBody = Gson().toJson(map).toString()
+                .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
             val rest = RetrofitOkHttpManagerUpbit(map).restService
             val responseOrders = responseSyncUpbitAPI(rest.requestOrders(requestBody))
             if(responseOrders.contains("error")){
@@ -183,55 +184,8 @@ class AutoTradingService: Service() {
     }
 
     private fun insertTradingHD(orders: Orders) {
-        /*
-        {
-        "uuid":"af9b007a-678e-4a71-95fe-58afb16a51f9"
-        ,"side":"bid"
-        ,"ord_type":"price"
-        ,"price":"5000"
-        ,"state":"wait"
-        ,"market":"KRW-ETH"
-        ,"created_at":"2022-12-05T21:51:33.678506+09:00"
-        ,"reserved_fee":"2.5"
-        ,"remaining_fee":"2.5"
-        ,"paid_fee":"0"
-        ,"locked":"5002.5"
-        ,"executed_volume":"0"
-        ,"trades_count":0
-        }
-        {
-        "uuid":"ccc6b35f-ead3-42e3-a93a-fa64ac7d4eae"
-        ,"side":"bid"
-        ,"ord_type":"price"
-        ,"price":"5000"
-        ,"state":"wait"
-        ,"market":"KRW-ETH"
-        ,"created_at":"2022-12-05T23:05:10.599324+09:00"
-        ,"reserved_fee":"2.5"
-        ,"remaining_fee":"2.5"
-        ,"paid_fee":"0"
-        ,"locked":"5002.5"
-        ,"executed_volume":"0"
-        ,"trades_count":0
-        }
-        */
         val cv = ContentValues()
         with(cv){
-            /*put("uuid", "ccc6b35f-ead3-42e3-a93a-fa64ac7d4eae")
-            put("side", "bid")
-            put("ord_type", "price")
-            put("price", "5000")
-            put("state", "wait")
-            put("market", "KRW-ETH")
-            put("created_at", "2022-12-05T23:05:10.599324+09:00")
-            put("volume", " ")
-            put("remaining_volume", " ")
-            put("reserved_fee", "2.5")
-            put("remaining_fee", "2.5")
-            put("paid_fee", "0")
-            put("locked", "5002.5")
-            put("executed_volume", "0")
-            put("trades_count", 0)*/
             put("uuid", orders.uuid)
             put("side", orders.side)
             put("ord_type", orders.ord_type)
@@ -252,34 +206,6 @@ class AutoTradingService: Service() {
     }
 
     private fun insertTradingDT(order: Order) {
-        """
-            {
-            "uuid":"af9b007a-678e-4a71-95fe-58afb16a51f9"
-            ,"side":"bid"
-            ,"ord_type":"price"
-            ,"price":"5000"
-            ,"state":"cancel"
-            ,"market":"KRW-ETH"
-            ,"created_at":"2022-12-05T21:51:34+09:00"
-            ,"reserved_fee":"2.5"
-            ,"remaining_fee":"0.00000076"
-            ,"paid_fee":"2.49999924"
-            ,"locked":"0.00152076"
-            ,"executed_volume":"0.00291036"
-            ,"trades_count":1
-            ,"trades":[
-                {"market":"KRW-ETH"
-                ,"uuid":"c8df2322-64b0-4f56-9162-1b5d3fd64d31"
-                ,"price":"1718000"
-                ,"volume":"0.00291036"
-                ,"funds":"4999.99848"
-                ,"trend":"up"
-                ,"created_at":"2022-12-05T21:51:33+09:00"
-                ,"side":"bid"
-                }
-                ]
-            }
-        """.trimIndent()
         order.trades.forEach {
             val cv = ContentValues()
             with(cv){
